@@ -60,6 +60,33 @@ class WarningsProxy(object):
             stdlib_warnings.warn(*args, **kwargs)
 
 
+def ensure_no_stdlib_warnings(source_root,
+                              # we authorize "warnings.warn", as long as it uses the custom WarningsProxy above
+                              forbidden_phrases=("import warnings", "from warnings")):
+    """
+    This utility should be used by each compat patcher user, to ensure all shims only go through
+    the configurable compat-patcher warnings system.
+
+    Returns the list of checked python source files.
+    """
+    import os
+
+    analysed_files = []
+
+    for root, subdirs, files in os.walk(source_root):
+        for f in [x for x in files if x.endswith(".py")]:
+            full_path = os.path.join(root, f)
+            #print(">> ANALYSING PYTHON FILE", full_path)
+            with open(full_path, "r") as s:
+                data = s.read()
+            for forbidden_phrase in forbidden_phrases:
+                if forbidden_phrase in data:
+                    if (f == "utilities.py") and ("import warnings as stdlib_warnings" in data):
+                        continue  # the only case OK is our own warnings utility
+                    raise ValueError("ALERT, wrong phrase '%s' detected in %s" % (forbidden_phrase, full_path))
+            analysed_files.append(f)
+    return analysed_files
+
 
 class PatchingUtilities(object):
 
@@ -170,6 +197,17 @@ class PatchingUtilities(object):
 
         return wrapper
 
+    def inject_class(self, target_object, target_klassname, klass):
+        """
+        :param target_object: The object to patch
+        :param target_klassname: The name given to the new class in the object to patch
+        :param klass: The class to inject : must be a class
+        """
+        assert isinstance(klass, six.class_types), klass
+
+        self._patch_injected_object(klass)
+        setattr(target_object, target_klassname, klass)
+
     def inject_module(self, target_module_name, module):
         """
         :param target_module_name: The name of the new module in sys.modules
@@ -182,19 +220,6 @@ class PatchingUtilities(object):
         self._patch_injected_object(module)
 
         sys.modules[target_module_name] = module
-
-
-    def inject_class(self, target_object, target_klassname, klass):
-        """
-        :param target_object: The object to patch
-        :param target_klassname: The name given to the new class in the object to patch
-        :param klass: The class to inject : must be a class
-        """
-        assert isinstance(klass, six.class_types), klass
-
-        self._patch_injected_object(klass)
-        setattr(target_object, target_klassname, klass)
-
 
     def inject_import_alias(self, alias_name, real_name):
         from compat_patcher import import_proxifier
