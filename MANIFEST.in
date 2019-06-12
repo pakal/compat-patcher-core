@@ -1,0 +1,10 @@
+include AUTHORS
+include CHANGELOG
+include LICENSE
+include VERSION
+include README.rst
+include MANIFEST.in
+recursive-include tests *.py *.html
+include pytest.ini
+include tox.ini
+global-exclude *.orig *.py[co] *.log *.swp

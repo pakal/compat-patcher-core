@@ -1,0 +1,5 @@
+
+Version 1.0
+==================
+
+* Generic Compat-Patcher system and improved from existing django-compat-patcher0.6 package
