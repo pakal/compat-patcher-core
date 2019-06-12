@@ -7,7 +7,6 @@ import six
 import sys
 
 
-from compat_patcher import utilities
 from compat_patcher.exceptions import SkipFixerException
 
 
