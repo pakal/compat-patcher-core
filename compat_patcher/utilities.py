@@ -13,10 +13,10 @@ import warnings as stdlib_warnings  # Do NOT import/use elsewhere than here!
 
 
 
-def _tuplify_software_version(version):
+def tuplify_software_version(version):
     """
     Coerces the version string (if not None), to a version tuple.
-    Ex. "1.7.0" becomes (1, 7, 0).
+    Ex. "1.7.0" becomes (1, 7, 0). No version suffix like "alpha" is expected.
     """
     if version is None:
         return version
@@ -27,16 +27,17 @@ def _tuplify_software_version(version):
     return version
 
 
-def _detuplify_software_version(input_tuple):
+def detuplify_software_version(version):
     """
     Coerces the version tuple (if not None), to a version string.
     Ex. (1, 7, 0) becomes "1.7.0".
     """
-    if input_tuple is None:
-        return ""
-    assert isinstance(input_tuple, tuple)
-    string = ".".join(str(number) for number in input_tuple)
-    return string
+    if version is None:
+        return version
+    if isinstance(version, (tuple, list)):
+        version = ".".join(str(number) for number in version)
+    assert isinstance(version, six.string_types)
+    return version
 
 
 

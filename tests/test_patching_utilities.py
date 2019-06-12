@@ -3,16 +3,17 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os, sys, pytest, warnings
 
 import compat_patcher
-from compat_patcher.utilities import PatchingUtilities, ensure_no_stdlib_warnings, _detuplify_software_version, _tuplify_software_version  # FIXME RENAME THESE
+from compat_patcher.utilities import PatchingUtilities, ensure_no_stdlib_warnings, detuplify_software_version, \
+    tuplify_software_version, WarningsProxy  # FIXME RENAME THESE
 
 example_config_provider = {"logging_level": "INFO", "enable_warnings": True, "patch_injected_objects":True}
-
-patching_utilities = PatchingUtilities(example_config_provider)
 
 default_patch_marker = "__COMPAT_PATCHED__"
 
 
 def test_patch_injected_object():
+
+    patching_utilities = PatchingUtilities(example_config_provider)
 
     import dummy_module
 
@@ -56,7 +57,11 @@ def test_patch_injected_object():
     import newcsv
     assert newcsv.__name__ == "csv"
 
+
+
 def test_patch_injected_objects_setting():
+
+    patching_utilities = PatchingUtilities(example_config_provider)
 
     import dummy_module
 
@@ -83,6 +88,10 @@ def test_patch_injected_objects_setting():
 
 def test_enable_warnings_setting():
 
+    patching_utilities = PatchingUtilities(example_config_provider)
+
+    warnings_proxy = WarningsProxy()  # For now, goes direct lyto stdlib
+
     warnings.simplefilter("always", Warning)
 
     with warnings.catch_warnings(record=True) as w:
@@ -91,15 +100,33 @@ def test_enable_warnings_setting():
     warning = w[0]
     assert "this feature is obsolete!" in str(warning.message)
 
+    with warnings.catch_warnings(record=True) as w:
+        warnings_proxy.warn("this feature is obsolete too!", DeprecationWarning)
+    assert len(w) == 1
+    warning = w[0]
+    assert "this feature is obsolete too!" in str(warning.message)
+
+    warnings_proxy.set_patching_utilities(patching_utilities)
+    with warnings.catch_warnings(record=True) as w:
+        warnings_proxy.warn("this feature is obsolete again!", DeprecationWarning)
+    assert len(w) == 1
+    warning = w[0]
+    assert "this feature is obsolete again!" in str(warning.message)
+
     patching_utilities.apply_settings(dict(enable_warnings=False))
 
     with warnings.catch_warnings(record=True) as w:
         patching_utilities.emit_warning("this feature is dead!", DeprecationWarning)
     assert len(w) == 0  # well disabled
 
+    with warnings.catch_warnings(record=True) as w:
+        warnings_proxy.warn("this feature is obsolete again!", DeprecationWarning)
+    assert len(w) == 0  # well disabled
 
 
 def test_logging_level_setting(capsys):
+
+    patching_utilities = PatchingUtilities(example_config_provider)
 
     patching_utilities.emit_log("<DEBUGGING1>", "DEBUG")
     patching_utilities.emit_log("<INFORMATION1>")  # default value
@@ -127,7 +154,6 @@ def test_logging_level_setting(capsys):
     assert "<INFORMATION3>" in err
 
 
-
 def test_no_stdlib_warnings_in_package():
     import warnings  # This line will trigger checker error
     del warnings
@@ -141,3 +167,11 @@ def test_no_stdlib_warnings_in_package():
     assert "wrong phrase" in str(exc)
     assert "test_patching_utilities.py" in str(exc)
 
+
+def test_version_tuplify_detuplify():
+    assert tuplify_software_version((5, 0)) == (5, 0)
+    assert tuplify_software_version("5.0") == (5, 0)
+    assert tuplify_software_version(None) is None
+    assert detuplify_software_version((5, 0)) == "5.0"
+    assert detuplify_software_version("5.0") == "5.0"
+    assert detuplify_software_version(None) is None

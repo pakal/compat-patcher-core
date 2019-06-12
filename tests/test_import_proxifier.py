@@ -18,21 +18,22 @@ def test_import_proxifier():
     register_module_alias("unexisting_alias", "unexisting_module")
 
     fullname = "logging.handlers"
-    print ("ALREADY THERE:", fullname, fullname in sys.modules)
+    #print ("ALREADY THERE:", fullname, fullname in sys.modules)
 
     import json.tool_alias
     assert sys.modules["json.tool_alias"]
     assert json.tool_alias
 
     fullname = "json.comments"
-    print ("ALREADY THERE:", fullname, fullname in sys.modules)
+    #print ("ALREADY THERE:", fullname, fullname in sys.modules)
 
     fullname = "json.tool"
-    print ("ALREADY THERE:", fullname, fullname in sys.modules)
+    #print ("ALREADY THERE:", fullname, fullname in sys.modules)
 
     import json.tool
-    if _is_new_style_proxifier:
-        print ("JSON TOOL SPEC loader_state:", json.tool.__spec__.loader_state)
+    import json.tool
+    #if _is_new_style_proxifier:
+        #print ("JSON TOOL SPEC loader_state:", json.tool.__spec__.loader_state)
 
     assert json.tool_alias is json.tool, (json.tool_alias,  json.tool)
     assert json.tool.__name__ == "json.tool", json.tool.__name__
@@ -47,7 +48,7 @@ def test_import_proxifier():
 
     from mylogging.handlers import RotatingFileHandler
     from logging.handlers import RotatingFileHandler as RotatingFileHandlerOriginal
-    print("mylogging led to RotatingFileHandler", RotatingFileHandler)
+    #print("mylogging led to RotatingFileHandler", RotatingFileHandler)
     assert RotatingFileHandler is RotatingFileHandlerOriginal
 
     try:

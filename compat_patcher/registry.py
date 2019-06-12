@@ -4,7 +4,7 @@ import collections
 
 from django.utils import six
 
-from compat_patcher.utilities import _tuplify_software_version
+from compat_patcher.utilities import tuplify_software_version
 
 class PatchingRegistry(object):
 
@@ -48,11 +48,11 @@ class PatchingRegistry(object):
         assert fixer_tags is None or isinstance(fixer_tags, list), fixer_tags
 
         fixer_family = self._family_prefix + fixer_reference_version
-        fixer_reference_version=_tuplify_software_version(fixer_reference_version)
-        fixer_applied_from_version=_tuplify_software_version(fixer_applied_from_version)
-        fixer_applied_upto_version=_tuplify_software_version(fixer_applied_upto_version)
-        feature_supported_from_version=_tuplify_software_version(feature_supported_from_version)
-        feature_supported_upto_version=_tuplify_software_version(feature_supported_upto_version)
+        fixer_reference_version=tuplify_software_version(fixer_reference_version)
+        fixer_applied_from_version=tuplify_software_version(fixer_applied_from_version)
+        fixer_applied_upto_version=tuplify_software_version(fixer_applied_upto_version)
+        feature_supported_from_version=tuplify_software_version(feature_supported_from_version)
+        feature_supported_upto_version=tuplify_software_version(feature_supported_upto_version)
         fixer_tags = fixer_tags or []
 
         if fixer_applied_from_version and fixer_applied_upto_version:
@@ -108,7 +108,7 @@ class PatchingRegistry(object):
 
         log = log or (lambda x:x)
 
-        current_software_version = _tuplify_software_version(current_software_version)
+        current_software_version = tuplify_software_version(current_software_version)
 
         relevant_fixers = []
 
