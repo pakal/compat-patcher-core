@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os, sys, pytest, warnings
 
 import compat_patcher
-from compat_patcher.utilities import PatchingUtilities, ensure_no_stdlib_warnings
+from compat_patcher.utilities import PatchingUtilities, ensure_no_stdlib_warnings, _detuplify_software_version, _tuplify_software_version  # FIXME RENAME THESE
 
 example_config_provider = {"logging_level": "INFO", "enable_warnings": True, "patch_injected_objects":True}
 
