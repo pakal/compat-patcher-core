@@ -12,12 +12,12 @@ from compat_patcher.exceptions import SkipFixerException
 
 class PatchingRunner(object):
 
-    def __init__(self, config_provider, patching_utilities, fixers_registry):
+    def __init__(self, config_provider, patching_utilities, patching_registry):
         self._all_applied_fixers = list()  # Keep application order
 
         self._config_provider = config_provider
         self._patching_utilities = patching_utilities
-        self._fixers_registry = fixers_registry
+        self._patching_registry = patching_registry
 
     def _get_software_version(self):
         """
@@ -75,7 +75,7 @@ class PatchingRunner(object):
             exclude_fixer_families = self.get_patcher_setting("exclude_fixer_families"),
         )
         log = functools.partial(self._patching_utilities.emit_log, level="DEBUG")
-        relevant_fixers = self._fixers_registry.get_relevant_fixers(current_software_version=current_software_version,
+        relevant_fixers = self._patching_registry.get_relevant_fixers(current_software_version=current_software_version,
                                                                     log=log,
                                                                     **fixer_settings)
 
@@ -91,7 +91,7 @@ class PatchingRunner(object):
 
         Returns the list of fixers that were successfully applied during this call.
         """
-        # print("Fixers are:", registry.FIXERS_REGISTRY)
+        # print("Fixers are:", registry.patching_registry)
         relevant_fixers = self._get_sorted_relevant_fixers()
         just_applied_fixers = self._apply_selected_fixers(relevant_fixers)
         return just_applied_fixers

@@ -6,11 +6,11 @@ from django.utils import six
 
 from compat_patcher.utilities import _tuplify_software_version
 
-class FixersRegistry(object):
+class PatchingRegistry(object):
 
     def __init__(self, family_prefix):
         self._family_prefix = family_prefix
-        self._fixers_registry = collections.OrderedDict()
+        self._patching_registry = collections.OrderedDict()
 
     @staticmethod
     def _extract_docstring(func):
@@ -73,19 +73,19 @@ class FixersRegistry(object):
                              feature_supported_from_version=feature_supported_from_version,
                              feature_supported_upto_version=feature_supported_upto_version)
 
-            assert fixer_id not in self._fixers_registry, "duplicate fixer id %s detected" % fixer_id
-            self._fixers_registry[fixer_id] = new_fixer
-            # print("FIXERS_REGISTRY", FIXERS_REGISTRY)
+            assert fixer_id not in self._patching_registry, "duplicate fixer id %s detected" % fixer_id
+            self._patching_registry[fixer_id] = new_fixer
+            # print("patching_registry", patching_registry)
             return func
 
         return _register_simple_fixer
 
 
     def get_all_fixers(self):
-        return list(self._fixers_registry.values())
+        return list(self._patching_registry.values())
 
     def get_fixer_by_id(self, fixer_id):
-        return self._fixers_registry[fixer_id]
+        return self._patching_registry[fixer_id]
 
 
     def get_relevant_fixers(self,
@@ -115,7 +115,7 @@ class FixersRegistry(object):
         # Shortcut for the common case "no specific inclusion/exclusion lists"
         mass_include = ((include_fixer_ids == ALL or include_fixer_families == ALL) and not any((exclude_fixer_ids, exclude_fixer_families)))
 
-        for fixer_id, fixer in self._fixers_registry.items():
+        for fixer_id, fixer in self._patching_registry.items():
             assert fixer_id == fixer["fixer_id"], fixer
 
             if (fixer["fixer_applied_from_version"] is not None and

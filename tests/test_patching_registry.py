@@ -5,7 +5,7 @@ import os, sys, random
 import pytest
 
 
-from dummy_fixers import fixers_registry
+from dummy_fixers import patching_registry
 
 
 
@@ -14,7 +14,7 @@ def test_get_relevant_fixer_ids():
     def log(msg):
         print(msg)
 
-    get_relevant_fixer_ids = functools.partial(fixers_registry.get_relevant_fixer_ids, log=log)
+    get_relevant_fixer_ids = functools.partial(patching_registry.get_relevant_fixer_ids, log=log)
 
     fixer_ids_v5 = get_relevant_fixer_ids(current_software_version="5.0")
     assert set(fixer_ids_v5) == set(["fix_something_from_v4", "fix_something_from_v5", "fix_something_upto_v6"])
@@ -86,22 +86,22 @@ def test_get_relevant_fixer_ids():
 
 
 def test_get_fixer_by_id():
-    res = fixers_registry.get_fixer_by_id("fix_something_from_v7")
+    res = patching_registry.get_fixer_by_id("fix_something_from_v7")
     assert isinstance(res, dict)
     assert res["fixer_id"] == "fix_something_from_v7"
 
     with pytest.raises(KeyError):
-        fixers_registry.get_fixer_by_id("ddssdfsdfsdf")
+        patching_registry.get_fixer_by_id("ddssdfsdfsdf")
 
 
 def test_get_all_fixers():
-    res = fixers_registry.get_all_fixers()
+    res = patching_registry.get_all_fixers()
     assert len(res) == 5
 
 
 def test_docstring_mandatory_on_fixers():
     with pytest.raises(ValueError):
-        @fixers_registry.register_compatibility_fixer(fixer_reference_version="5.0",
+        @patching_registry.register_compatibility_fixer(fixer_reference_version="5.0",
                                                       fixer_applied_from_version="6.0")
         def fixer_without_docstring(utils):
             pass
