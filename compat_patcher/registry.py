@@ -2,15 +2,40 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import collections
 
-from django.utils import six
+import six
 
 from compat_patcher.utilities import tuplify_software_version
 
 class PatchingRegistry(object):
 
-    def __init__(self, family_prefix):
+    def __init__(self, family_prefix, populate_callable=None):
+        """
+        This registry is used to store and select a set of fixers related to some specific software.
+
+        `family_prefix` will be used to constructe family names, along with fixers' reference version.
+
+        `populate_callable`, if provided, is a callable taking the registrry as first argument, and which will be used
+        when calling `populate()` on the registry.
+        """
+        assert family_prefix and isinstance(family_prefix, six.string_types), family_prefix
+        assert populate_callable is None or hasattr(populate_callable, "__call__"), populate_callable
         self._family_prefix = family_prefix
+        self._is_populated = False
+        self._populate_callable = populate_callable
         self._patching_registry = collections.OrderedDict()
+
+    def populate(self):
+        """
+        Trigger the registration of lazy fixers, which might be in other submodules, or waiting in factory functions.
+
+        Calling this method can
+        """
+        res = None
+        if not self._is_populated:
+            if self._populate_callable:
+                res = self._populate_callable(self)
+            self._is_populated = True
+        return res
 
     @staticmethod
     def _extract_docstring(func):
@@ -84,6 +109,7 @@ class PatchingRegistry(object):
     def get_all_fixers(self):
         return list(self._patching_registry.values())
 
+
     def get_fixer_by_id(self, fixer_id):
         return self._patching_registry[fixer_id]
 
@@ -102,7 +128,11 @@ class PatchingRegistry(object):
         For inclusion/exclusion filters, a special "*" value means "all fixers", else a list of strings is expected.
 
         An output callable `log` may be provided, expecting a string as argument.
+
+        This method forces a populate() on the registry.
         """
+
+        self.populate()
 
         ALL = "*"
 

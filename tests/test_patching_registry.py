@@ -4,9 +4,22 @@ import functools
 import os, sys, random
 import pytest
 
-
+from compat_patcher.registry import PatchingRegistry
 from dummy_fixers import patching_registry
 
+
+def test_registry_populate():
+
+    assert patching_registry.populate() is None  # Nothing done
+    assert patching_registry.populate() is None  # Again
+
+    registry = PatchingRegistry("dummyfamily", populate_callable=lambda registry: XYZ)
+    with pytest.raises(NameError):
+        registry.populate()
+
+    registry = PatchingRegistry("dummyfamily2", populate_callable=lambda registry: registry)
+    assert registry.populate() is registry
+    assert registry.populate() is None  # Idempotent
 
 
 def test_get_relevant_fixer_ids():
