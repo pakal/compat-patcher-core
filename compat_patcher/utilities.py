@@ -5,7 +5,7 @@ import logging
 import types
 
 import sys
-from django.utils import six
+import six
 
 import warnings as stdlib_warnings  # Do NOT import/use elsewhere than here!
 

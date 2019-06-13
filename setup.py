@@ -6,7 +6,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))  # security
 
 from setuptools import setup, find_packages
 
-def read(fname):
+def read_file(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read().strip()
 
 classifiers = """\
@@ -33,8 +33,8 @@ needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 setup_requires = ['pytest-runner'] if needs_pytest else []
 
 setup(
-    name='django-compat-patcher',
-    version=read("VERSION"),
+    name='compat-patcher',
+    version=read_file("VERSION"),
     author='Pascal Chambon & others',
     author_email='pythoniks@gmail.com',
     ## TODO FIXME url='https://github.com/pakal/compat-patcher',
@@ -42,15 +42,11 @@ setup(
     platforms=["any"],
     description="A patcher system to allow easy and lasting API compatibility.",
     classifiers=filter(None, classifiers.split("\n")),
-    long_description=read("README.rst"),
-
+    long_description=read_file("README.rst"),
     packages=packages,
-
+    install_requires=['six'],
     extras_require=None,
     setup_requires=setup_requires,
     tests_require=["pytest", "pytest-cov"],
-
-    ##use_2to3=True,
-    ###use_2to3_exclude_fixers=['lib2to3.fixes.fix_import'],
 )
 

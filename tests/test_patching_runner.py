@@ -50,13 +50,12 @@ def test_patch_software():
     assert fixers_applied == []  # Already applied so skipped
 
 
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValueError, match="valid current_software_version"):
         django_patching_runner = PatchingRunner(config_provider=config_provider,
                                                   patching_utilities=patching_utilities,
                                                   patching_registry=patching_registry,
                                                 )
         django_patching_runner.patch_software()
-        assert "valid current_software_version" in str(exc)
 
 
 '''

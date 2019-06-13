@@ -162,10 +162,8 @@ def test_no_stdlib_warnings_in_package():
     assert len(analysed_files) > 5, analysed_files
 
     pkg_root = os.path.dirname(__file__)
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValueError, match="wrong phrase.*test_patching_utilities.py"):
         ensure_no_stdlib_warnings(pkg_root)
-    assert "wrong phrase" in str(exc)
-    assert "test_patching_utilities.py" in str(exc)
 
 
 def test_version_tuplify_detuplify():
