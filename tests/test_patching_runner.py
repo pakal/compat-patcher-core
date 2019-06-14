@@ -1,8 +1,8 @@
 import pytest
-from compat_patcher.utilities import PatchingUtilities
-from compat_patcher.runner import PatchingRunner
 
 import dummy_module
+from compat_patcher.runner import PatchingRunner
+from compat_patcher.utilities import PatchingUtilities
 from dummy_fixers import patching_registry
 
 

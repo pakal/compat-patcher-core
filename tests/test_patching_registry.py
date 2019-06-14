@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import functools
-import os, sys, random
+
 import pytest
 
 from compat_patcher.registry import PatchingRegistry

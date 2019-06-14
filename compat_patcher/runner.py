@@ -1,11 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import functools
-import types
-import logging
-import six
-import sys
 
+import six
 
 from compat_patcher.exceptions import SkipFixerException
 

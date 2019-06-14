@@ -9,8 +9,6 @@ from compat_patcher.import_proxifier import (
 
 def test_import_proxifier():
 
-    import logging.handlers
-
     install_import_proxifier()
     install_import_proxifier()  # idempotent
 

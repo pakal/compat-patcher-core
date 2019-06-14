@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import sys, os
+import os
+import sys
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # security
 

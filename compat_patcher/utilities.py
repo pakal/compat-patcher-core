@@ -2,11 +2,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import functools
 import logging
-import types
 import sys
-import six
-
+import types
 import warnings as stdlib_warnings  # Do NOT import/use elsewhere than here!
+
+import six
 
 
 def tuplify_software_version(version):

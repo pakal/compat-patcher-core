@@ -18,9 +18,9 @@ There are different ways of implementing "import aliases":
 Beware about not creating loops with your aliases, as this could trigger infinite recursions.
 """
 
-import os, sys
-import importlib, contextlib
-
+import contextlib
+import importlib
+import sys
 
 # maps ALIASES to REAL MODULES
 MODULES_ALIASES_REGISTRY = []

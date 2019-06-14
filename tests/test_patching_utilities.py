@@ -1,6 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import os, sys, pytest, warnings
+import os
+import warnings
+
+import pytest
 
 import compat_patcher
 from compat_patcher.registry import PatchingRegistry
