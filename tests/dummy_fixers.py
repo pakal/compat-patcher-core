@@ -73,3 +73,50 @@ def fix_something_from_v6(utils):
 def fix_something_from_v7(utils):
     "Does something still"
     dummy_module.APPLIED_FIXERS.append(fix_something_from_v7.__name__)
+
+
+
+
+patching_registry_bis = PatchingRegistry(family_prefix="other",
+                                     current_software_version=lambda: "10",)
+
+@patching_registry_bis.register_compatibility_fixer(
+    fixer_reference_version="6.3",
+    fixer_applied_from_version="7.3",
+)
+def fix_something_other_taken(utils):
+    "Does something still"
+    dummy_module.APPLIED_FIXERS.append(fix_something_other_taken.__name__)
+
+@patching_registry_bis.register_compatibility_fixer(
+    fixer_reference_version="6.3",
+    fixer_applied_from_version="20",
+)
+def fix_something_other_not_taken(utils):
+    "Does something still"
+    dummy_module.APPLIED_FIXERS.append(fix_something_other_not_taken.__name__)
+
+
+assert fix_something_always  # Already existing
+def __fix_something_always(utils):
+    "Does something still"
+    dummy_module.APPLIED_FIXERS.append(__fix_something_always.__name__)
+__fix_something_always.__name__ = "fix_something_always"
+
+patching_registry_bis.register_compatibility_fixer(
+    fixer_reference_version="8.3",
+)(__fix_something_always)
+
+
+
+patching_registry_ter = PatchingRegistry(family_prefix="other",
+                                     current_software_version=lambda: "100",)
+
+@patching_registry_ter.register_compatibility_fixer(
+        fixer_reference_version="8.3",
+)
+def fix_everything(utils):
+    "Does something still"
+    dummy_module.APPLIED_FIXERS.append(fix_everything.__name__)
+
+patching_registry_ter_as_callable = lambda: patching_registry_ter

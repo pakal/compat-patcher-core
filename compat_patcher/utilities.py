@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import functools
+import importlib
 import logging
 import sys
 import types
@@ -290,3 +291,13 @@ def ensure_all_fixers_have_a_test_under_pytest(
                     session=mock_item.session,
                 )
             )
+
+
+def _import_attribute_from_dotted_string(dotted_string):
+    """Turns `mymodule.mysubmodule.my_attr` into the imported my_attr
+    element, be it a class or an instance.
+    """
+    module_name, attr_name = dotted_string.rsplit(".", 1)
+    module = importlib.import_module(module_name)
+    attribute = getattr(module, attr_name)
+    return attribute

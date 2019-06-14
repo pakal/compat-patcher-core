@@ -4,8 +4,8 @@ import functools
 
 import pytest
 
-from compat_patcher.registry import PatchingRegistry
-from dummy_fixers import patching_registry
+from compat_patcher.registry import PatchingRegistry, MultiPatchingRegistry
+from dummy_fixers import patching_registry, patching_registry_bis, patching_registry_ter
 
 
 def test_registry_populate():
@@ -44,6 +44,8 @@ def test_get_relevant_fixer_ids():
             "fix_something_but_skipped",
         ]
     )
+    assert len(patching_registry.get_relevant_fixers()) == 5  # Same
+
 
     fixer_ids_v5 = get_relevant_fixer_ids(current_software_version="5.0")
     assert set(fixer_ids_v5) == set(
@@ -218,3 +220,73 @@ def test_registry_current_software_version():
     with pytest.raises(ValueError, match="valid current_software_version"):
         registry.get_relevant_fixers()
     assert registry.get_relevant_fixers(current_software_version="1") == []
+
+
+def test_multi_patching_registry():
+
+    multi_registry = MultiPatchingRegistry(registries=[patching_registry, patching_registry_bis])
+    assert not patching_registry_bis._is_populated
+    assert not multi_registry._is_populated
+
+    assert len(patching_registry.get_all_fixers()) == 7
+    assert len(patching_registry_bis.get_all_fixers()) == 3
+
+    fixers = multi_registry.get_all_fixers()
+    assert len(fixers) == 10  # All, including duplicate names!
+    assert not patching_registry_bis._is_populated
+    assert not multi_registry._is_populated
+
+    fixer = multi_registry.get_fixer_by_id("fix_something_always")
+    assert fixer["fixer_reference_version"] == (5, 0)  # First one is returned!
+    with pytest.raises(KeyError):
+        multi_registry.get_fixer_by_id("badname")
+    assert not patching_registry_bis._is_populated
+    assert not multi_registry._is_populated
+
+    selected_fixers = multi_registry.get_relevant_fixer_ids()
+    assert selected_fixers == ['fix_something_from_v4',
+      'fix_something_from_v5',
+   'fix_something_upto_v6',
+     'fix_something_always',
+    'fix_something_but_skipped',
+    'fix_something_other_taken',
+   'fix_something_always']  # Duplicate fixer is taken too
+    assert patching_registry_bis._is_populated
+    assert multi_registry._is_populated
+
+    misc_fixers = multi_registry.get_relevant_fixer_ids(
+            current_software_version="1000"
+    )
+    assert misc_fixers == ['fix_something_from_v5',
+     'fix_something_always',
+   'fix_something_but_skipped',
+   'fix_something_from_v6',
+     'fix_something_from_v7',
+    'fix_something_other_taken',
+    'fix_something_other_not_taken',
+    'fix_something_always']
+
+
+    multi_registry2 = MultiPatchingRegistry(registries=["dummy_fixers.patching_registry_bis", "dummy_fixers.patching_registry_ter_as_callable"])
+    assert not multi_registry2._is_populated
+    assert not patching_registry_ter._is_populated
+
+    multi_registry2.populate()
+    assert multi_registry2._is_populated
+    assert patching_registry_ter._is_populated
+
+    selected_fixers2 = multi_registry2.get_relevant_fixer_ids()
+
+    assert selected_fixers2 == ['fix_something_other_taken', 'fix_something_always', 'fix_everything']
+
+    with pytest.raises(ValueError, match="Wrong registry reference"):
+        MultiPatchingRegistry(registries=["dummy_fixers.SkipFixerException"])
+
+    with pytest.raises(ImportError):
+        MultiPatchingRegistry(registries=["badmodule.unexisting"])
+
+    with pytest.raises(AttributeError):
+        MultiPatchingRegistry(registries=["dummy_fixers.unexisting"])
+
+    with pytest.raises(ValueError, match="unpack"):
+        MultiPatchingRegistry(registries=["badstring"])

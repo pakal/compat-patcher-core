@@ -1,10 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import collections
+import importlib
+import itertools
 
 import six
 
-from compat_patcher.utilities import tuplify_software_version
+from compat_patcher.utilities import tuplify_software_version, _import_attribute_from_dotted_string
+
 
 class PatchingRegistry(object):
     def __init__(self, family_prefix, populate_callable=None, current_software_version=None):
@@ -44,8 +47,6 @@ class PatchingRegistry(object):
     def populate(self):
         """
         Trigger the registration of lazy fixers, which might be in other submodules, or waiting in factory functions.
-
-        Calling this method can
         """
         res = None
         if not self._is_populated:
@@ -90,7 +91,7 @@ class PatchingRegistry(object):
 
         assert isinstance(
             fixer_reference_version, six.string_types
-        ), fixer_reference_version  # eg. "1.9"
+        ) and fixer_reference_version, fixer_reference_version  # eg. "1.9"
         assert fixer_tags is None or isinstance(fixer_tags, list), fixer_tags
 
         fixer_family = self._family_prefix + fixer_reference_version
@@ -253,3 +254,75 @@ class PatchingRegistry(object):
     def get_relevant_fixer_ids(self, *args, **kwargs):
         fixers = self.get_relevant_fixers(*args, **kwargs)
         return [f["fixer_id"] for f in fixers]
+
+
+class MultiPatchingRegistry(object):
+    """
+    This patching registry wraps a set of other registries, each having its own fixers and current software version.
+
+    It concatenates and returns selected fixers on demand, assuming that they are compatible with each other.
+
+    Forcing a `current_software_version` as parameter of `get_relevant_fixers` is still possible,
+    but beware that these registries all deal with the same software stack in this case.
+    """
+
+    def __init__(self, registries):
+        self._registry_references = registries
+        self._is_populated = False
+        self._registries = self._load_registries(registries)
+
+    def populate(self):
+        res = []
+        if not self._is_populated:
+            for registry in self._registries:
+                res.append(registry.populate())
+            self._is_populated = True
+        return res
+
+    @staticmethod
+    def _load_registries(registry_references):
+        registries = []
+        for registry_reference in registry_references:
+
+            original_registry_reference = registry_reference
+
+            if isinstance(registry_reference, six.string_types):
+                registry_reference = _import_attribute_from_dotted_string(registry_reference)
+
+            if six.callable(registry_reference):
+                registry_reference = registry_reference()
+
+            if not isinstance(registry_reference, PatchingRegistry):
+                raise ValueError("Wrong registry reference %r" % original_registry_reference)
+
+            registries.append(registry_reference)
+        assert len(registries) == len(registry_references)
+        return registries
+
+    @staticmethod
+    def _flatten(list_of_lists):
+        return list(itertools.chain(*list_of_lists))
+
+    def get_relevant_fixers(self, *args, **kwargs):
+
+        self.populate()
+
+        return self._flatten(registry.get_relevant_fixers(*args, **kwargs)
+                      for registry in self._registries)
+
+    def get_all_fixers(self, *args, **kwargs):
+        return self._flatten([registry.get_all_fixers(*args, **kwargs)
+                      for registry in self._registries])
+
+    def get_fixer_by_id(self, fixer_id, *args, **kwargs):
+        """
+        In case of duplicate fixers having the same ID, we just return the first one
+        """
+        for registry in self._registries:
+            try:
+                return registry.get_fixer_by_id(fixer_id, *args, **kwargs)
+            except KeyError:
+                pass
+        raise KeyError("Fixer %r not found in any patching registries" % fixer_id)
+
+    get_relevant_fixer_ids = six.get_unbound_function(PatchingRegistry.get_relevant_fixer_ids)  # Unmodified
