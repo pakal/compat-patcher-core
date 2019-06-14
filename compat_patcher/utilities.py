@@ -3,7 +3,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import functools
 import logging
 import types
-
 import sys
 import six
 
@@ -229,5 +228,31 @@ class PatchingUtilities(object):
                                                real_name=real_name)
 
 
+def ensure_all_fixers_have_a_test_under_pytest(config, items, patching_registry, _fail_fast=False):
+    """Call this pytest hook from a conftest.py to ensure your own test suite covers all your registered fixers,
+    like so::
 
+        def pytest_collection_modifyitems(config, items):
+            from yourownpackage.registry import your_patching_registry
+            from compat_patcher.utilities import ensure_all_fixers_have_a_test_under_pytest
+            ensure_all_fixers_have_a_test_under_pytest(
+                    config=config, items=items, patching_registry=django_patching_registry)
+    """
+    import copy
+    from _pytest.python import Function
+    all_fixers = patching_registry.get_all_fixers()
+    all_tests_names = [test.name for test in items]
+    for fixer in all_fixers:
+        expected_test_name = "test_{}".format(fixer['fixer_callable'].__name__)
+        if expected_test_name not in all_tests_names:
+            error_message = "No test written for {} fixer '{}'".format(fixer['fixer_family'].title(), fixer['fixer_callable'].__name__)
 
+            def missing_fixer_test():
+                raise RuntimeError(error_message)
+
+            if _fail_fast:  # For testing only
+                missing_fixer_test()
+            mock_item = copy.copy(items[0])  # We expect at least 1 test in the test suite, else it breaks...
+            mock_item.parent.name = "test_{}_fixers.py".format(fixer['fixer_family'])
+            setattr(mock_item.parent.obj, "MISSING_"+expected_test_name, missing_fixer_test)
+            items.append(Function(name="MISSING_"+expected_test_name, parent=mock_item.parent, config=config, session=mock_item.session))

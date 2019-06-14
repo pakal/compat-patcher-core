@@ -3,8 +3,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os, sys, pytest, warnings
 
 import compat_patcher
+from compat_patcher.registry import PatchingRegistry
 from compat_patcher.utilities import PatchingUtilities, ensure_no_stdlib_warnings, detuplify_software_version, \
-    tuplify_software_version, WarningsProxy  # FIXME RENAME THESE
+    tuplify_software_version, WarningsProxy, ensure_all_fixers_have_a_test_under_pytest
 
 example_config_provider = {"logging_level": "INFO", "enable_warnings": True, "patch_injected_objects":True}
 
@@ -173,3 +174,28 @@ def test_version_tuplify_detuplify():
     assert detuplify_software_version((5, 0)) == "5.0"
     assert detuplify_software_version("5.0") == "5.0"
     assert detuplify_software_version(None) is None
+
+
+def test_ensure_all_fixers_have_a_test_under_pytest():
+
+    class DummyNode():
+        pass
+
+    patching_registry = PatchingRegistry("dummyname")
+
+    @patching_registry.register_compatibility_fixer(fixer_reference_version="10.1")
+    def my_dummy_fixer(utils):
+        "A help string"
+        pass
+
+    node = DummyNode()
+    node.name = "test_my_dummy_fixer"
+    items = [node]
+
+    # No problem, all registered fixers have their test here
+    ensure_all_fixers_have_a_test_under_pytest(config=None, items=items, patching_registry=patching_registry, _fail_fast=True)
+
+    # Error when attempting to clone first item to report the missing test
+    with pytest.raises(RuntimeError, match="No test written for .* fixer"):
+        ensure_all_fixers_have_a_test_under_pytest(config=None, items=[],
+            patching_registry=patching_registry, _fail_fast=True)
