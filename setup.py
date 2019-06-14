@@ -6,8 +6,10 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))  # security
 
 from setuptools import setup, find_packages
 
+
 def read_file(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read().strip()
+
 
 classifiers = """\
 Development Status :: 5 - Production/Stable
@@ -29,14 +31,14 @@ Operating System :: MacOS :: MacOS X
 
 packages = find_packages(exclude="tests")
 
-needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
-setup_requires = ['pytest-runner'] if needs_pytest else []
+needs_pytest = {"pytest", "test", "ptr"}.intersection(sys.argv)
+setup_requires = ["pytest-runner"] if needs_pytest else []
 
 setup(
-    name='compat-patcher',
+    name="compat-patcher",
     version=read_file("VERSION"),
-    author='Pascal Chambon & others',
-    author_email='pythoniks@gmail.com',
+    author="Pascal Chambon & others",
+    author_email="pythoniks@gmail.com",
     ## TODO FIXME url='https://github.com/pakal/compat-patcher',
     license="MIT",
     platforms=["any"],
@@ -44,9 +46,8 @@ setup(
     classifiers=filter(None, classifiers.split("\n")),
     long_description=read_file("README.rst"),
     packages=packages,
-    install_requires=['six'],
+    install_requires=["six"],
     extras_require=None,
     setup_requires=setup_requires,
     tests_require=["pytest", "pytest-cov"],
 )
-

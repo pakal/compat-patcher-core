@@ -31,9 +31,12 @@ def enrich_import_error(alias_name):
     try:
         yield
     except ImportError as e:
-        #print(vars(e), str(e), dir(e), e.args)
+        # print(vars(e), str(e), dir(e), e.args)
         # ImportError exception has different structure between py2k and py3k
-        enrich_message = lambda msg: "%s (when loading alias name '%s')" % (msg, alias_name)
+        enrich_message = lambda msg: "%s (when loading alias name '%s')" % (
+            msg,
+            alias_name,
+        )
         if hasattr(e, "msg"):  # py3k
             e.msg = enrich_message(e.msg)
         else:  # py2k, the "message" attribute is actually ignored by __str__
@@ -44,7 +47,9 @@ def enrich_import_error(alias_name):
 def register_module_alias(alias_name, real_name):
     assert not alias_name.startswith("."), alias_name
     assert not real_name.startswith("."), real_name
-    assert alias_name != real_name, alias_name  # lots of other import cycles are possible though
+    assert (
+        alias_name != real_name
+    ), alias_name  # lots of other import cycles are possible though
     entry = (alias_name, real_name)
     if entry not in MODULES_ALIASES_REGISTRY:
         MODULES_ALIASES_REGISTRY.append(entry)
@@ -58,7 +63,7 @@ def _get_module_alias_real_name(fullname):
     or None.
     """
     for k, v in MODULES_ALIASES_REGISTRY:
-        if (k == fullname) or fullname.startswith(k +"."):
+        if (k == fullname) or fullname.startswith(k + "."):
             return fullname.replace(k, v)
     return None
 
@@ -73,9 +78,7 @@ except ImportError:
 
     _is_new_style_proxifier = False
 
-
     class AliasingLoader(object):
-
         def __init__(self, real_name, alias_name):
             self.real_name = real_name
             self.alias_name = alias_name
@@ -89,13 +92,11 @@ except ImportError:
             sys.modules[name] = module  # cached
             return module
 
-
     class ModuleAliasFinder(object):
-
         @classmethod
         def find_module(self, fullname, *args, **kwargs):
 
-            #print("OldMetaPathFinder FINDMODULE", fullname, args, kwargs)
+            # print("OldMetaPathFinder FINDMODULE", fullname, args, kwargs)
 
             real_name = _get_module_alias_real_name(fullname)
             if real_name is None:
@@ -108,7 +109,6 @@ else:
     # NEW STYLE : we use modern import hooks (PEP 451 etc.)
 
     _is_new_style_proxifier = True
-
 
     class AliasingLoader(importlib.abc.Loader):
 
@@ -136,7 +136,6 @@ else:
             module.__spec__.loader_state["aliased_spec"] = self.target_spec_backup
             pass  # nothing else to do, module already loaded
 
-
     class ModuleAliasFinder(importlib.abc.MetaPathFinder):
         """
         Note : due to new call of _init_module_attrs(spec...) on aliased
@@ -146,7 +145,7 @@ else:
         @classmethod
         def find_spec(cls, fullname, *args, **kwargs):
 
-            #print("MetaPathFinder FINDSPEC", fullname, args, kwargs)
+            # print("MetaPathFinder FINDSPEC", fullname, args, kwargs)
 
             real_name = _get_module_alias_real_name(fullname)
             if real_name is None:
@@ -156,15 +155,15 @@ else:
 
             alias_loader = AliasingLoader(real_name=real_name, alias_name=fullname)
 
-            spec = importlib.machinery.ModuleSpec(name=fullname,
-                                           loader=alias_loader,
-                                           origin="alias",
-                                           loader_state={"aliased_name": fullname,
-                                                         "aliased_spec": None},
-                                           is_package=True)  # in doubt, assume...
+            spec = importlib.machinery.ModuleSpec(
+                name=fullname,
+                loader=alias_loader,
+                origin="alias",
+                loader_state={"aliased_name": fullname, "aliased_spec": None},
+                is_package=True,
+            )  # in doubt, assume...
 
             return spec
-
 
 
 def install_import_proxifier():

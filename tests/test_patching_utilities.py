@@ -4,10 +4,20 @@ import os, sys, pytest, warnings
 
 import compat_patcher
 from compat_patcher.registry import PatchingRegistry
-from compat_patcher.utilities import PatchingUtilities, ensure_no_stdlib_warnings, detuplify_software_version, \
-    tuplify_software_version, WarningsProxy, ensure_all_fixers_have_a_test_under_pytest
+from compat_patcher.utilities import (
+    PatchingUtilities,
+    ensure_no_stdlib_warnings,
+    detuplify_software_version,
+    tuplify_software_version,
+    WarningsProxy,
+    ensure_all_fixers_have_a_test_under_pytest,
+)
 
-example_config_provider = {"logging_level": "INFO", "enable_warnings": True, "patch_injected_objects":True}
+example_config_provider = {
+    "logging_level": "INFO",
+    "enable_warnings": True,
+    "patch_injected_objects": True,
+}
 
 default_patch_marker = "__COMPAT_PATCHED__"
 
@@ -18,27 +28,30 @@ def test_patch_injected_object():
 
     import dummy_module
 
-    class MyTemplateResponse():
+    class MyTemplateResponse:
         pass
 
-    patching_utilities.inject_class(dummy_module, 'MyTemplateResponse', MyTemplateResponse)
+    patching_utilities.inject_class(
+        dummy_module, "MyTemplateResponse", MyTemplateResponse
+    )
     assert getattr(dummy_module.MyTemplateResponse, default_patch_marker) == True
     del dummy_module.MyTemplateResponse
 
     response = MyTemplateResponse()
 
-    patching_utilities.inject_attribute(dummy_module, '_response_', response)
+    patching_utilities.inject_attribute(dummy_module, "_response_", response)
     assert getattr(dummy_module._response_, default_patch_marker) == True
     del dummy_module._response_
 
     def delete_selected():
         pass
 
-    patching_utilities.inject_callable(dummy_module, 'delete_selected', delete_selected)
+    patching_utilities.inject_callable(dummy_module, "delete_selected", delete_selected)
     assert getattr(dummy_module.delete_selected, default_patch_marker) == True
 
     patching_utilities.inject_module("new_dummy_module", dummy_module)
     import new_dummy_module
+
     assert getattr(new_dummy_module, default_patch_marker) == True
 
     def mycallable(added):
@@ -47,17 +60,19 @@ def test_patch_injected_object():
     source_object = MyTemplateResponse()
     source_object.my_attr = mycallable
     target_object = MyTemplateResponse()
-    patching_utilities.inject_callable_alias(source_object, "my_attr",
-                          target_object, "other_attr")
+    patching_utilities.inject_callable_alias(
+        source_object, "my_attr", target_object, "other_attr"
+    )
     assert getattr(target_object.other_attr, default_patch_marker) == True
     assert target_object.other_attr(added=2) == 44
 
     patching_utilities.inject_import_alias("newcsv", real_name="csv")
     from newcsv import DictReader
+
     del DictReader
     import newcsv
-    assert newcsv.__name__ == "csv"
 
+    assert newcsv.__name__ == "csv"
 
 
 def test_patch_injected_objects_setting():
@@ -73,18 +88,17 @@ def test_patch_injected_objects_setting():
     my_mock = MyMock()
     my_mock2 = MyMock()
 
-
     patching_utilities.apply_settings(dict(patch_injected_objects="myattrname"))
-    patching_utilities.inject_attribute(dummy_module, 'new_stuff', my_mock)
+    patching_utilities.inject_attribute(dummy_module, "new_stuff", my_mock)
     assert dummy_module.new_stuff.myattrname is True
-    patching_utilities.inject_attribute(dummy_module, 'new_stuff2', my_mock.method)
-    assert not hasattr(dummy_module.new_stuff2, "myattrname")  # Bound method has no __dict__
+    patching_utilities.inject_attribute(dummy_module, "new_stuff2", my_mock.method)
+    assert not hasattr(
+        dummy_module.new_stuff2, "myattrname"
+    )  # Bound method has no __dict__
 
     patching_utilities.apply_settings(dict(patch_injected_objects=False))
-    patching_utilities.inject_attribute(dummy_module, 'other_stuff', my_mock2)
+    patching_utilities.inject_attribute(dummy_module, "other_stuff", my_mock2)
     assert not dummy_module.other_stuff.__dict__  # No extra marker
-
-
 
 
 def test_enable_warnings_setting():
@@ -157,6 +171,7 @@ def test_logging_level_setting(capsys):
 
 def test_no_stdlib_warnings_in_package():
     import warnings  # This line will trigger checker error
+
     del warnings
     pkg_root = os.path.dirname(compat_patcher.__file__)
     analysed_files = ensure_no_stdlib_warnings(pkg_root)
@@ -177,8 +192,7 @@ def test_version_tuplify_detuplify():
 
 
 def test_ensure_all_fixers_have_a_test_under_pytest():
-
-    class DummyNode():
+    class DummyNode:
         pass
 
     patching_registry = PatchingRegistry("dummyname")
@@ -193,9 +207,12 @@ def test_ensure_all_fixers_have_a_test_under_pytest():
     items = [node]
 
     # No problem, all registered fixers have their test here
-    ensure_all_fixers_have_a_test_under_pytest(config=None, items=items, patching_registry=patching_registry, _fail_fast=True)
+    ensure_all_fixers_have_a_test_under_pytest(
+        config=None, items=items, patching_registry=patching_registry, _fail_fast=True
+    )
 
     # Error when attempting to clone first item to report the missing test
     with pytest.raises(RuntimeError, match="No test written for .* fixer"):
-        ensure_all_fixers_have_a_test_under_pytest(config=None, items=[],
-            patching_registry=patching_registry, _fail_fast=True)
+        ensure_all_fixers_have_a_test_under_pytest(
+            config=None, items=[], patching_registry=patching_registry, _fail_fast=True
+        )
