@@ -6,12 +6,6 @@ from compat_patcher.utilities import PatchingUtilities
 from dummy_fixers import patching_registry
 
 
-class ____MyPatchingRunner(PatchingRunner):
-
-    forced_software_version = "5.0"
-
-    def _get_software_version(self):
-        return self.forced_software_version
 
 
 def test_patch_software():
@@ -29,13 +23,12 @@ def test_patch_software():
         exclude_fixer_families=None,
     )
 
-    patching_utilities = PatchingUtilities(config_provider=config_provider)
+    patching_utilities = PatchingUtilities(config_provider=config_provider,)
 
     django_patching_runner = PatchingRunner(
         config_provider=config_provider,
         patching_utilities=patching_utilities,
         patching_registry=patching_registry,
-        current_software_version="5.0",
     )
 
     _sorted_fixers_ids = [
@@ -59,19 +52,12 @@ def test_patch_software():
     fixers_applied = django_patching_runner.patch_software()
     assert fixers_applied == []  # Already applied so skipped
 
-    with pytest.raises(ValueError, match="valid current_software_version"):
-        django_patching_runner = PatchingRunner(
-            config_provider=config_provider,
-            patching_utilities=patching_utilities,
-            patching_registry=patching_registry,
-        )
-        django_patching_runner.patch_software()
 
 
 '''
 
 
-
+FIXME
 
 def patch(settings=None):
     """Load every dependency, and apply registered fixers according to provided settings (or Django settings as a fallback)."""

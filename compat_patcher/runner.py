@@ -13,26 +13,13 @@ class PatchingRunner(object):
         config_provider,
         patching_utilities,
         patching_registry,
-        current_software_version=None,
     ):
         self._all_applied_fixers = list()  # Keep application order
 
         self._config_provider = config_provider
         self._patching_utilities = patching_utilities
         self._patching_registry = patching_registry
-        self._current_software_version = current_software_version
 
-    def _get_software_version(self):
-        """
-        Returns a tuple of integers, or a dotted string, representing the current version of the software to be patched.
-        """
-        current_software_version = self._current_software_version
-        # If self._current_software_version is left as None, we expect _get_software_version() to be overridden
-        if not current_software_version:
-            raise ValueError(
-                "PatchingRunner must be provided a valid current_software_version"
-            )
-        return current_software_version
 
     def _get_patcher_setting(self, name):
         """
@@ -87,7 +74,8 @@ class PatchingRunner(object):
         return just_applied_fixers
 
     def _get_sorted_relevant_fixers(self):
-        current_software_version = self._get_software_version()
+
+        # For now, we don't need to be able to force-send a `current_software_version`
         fixer_settings = dict(
             include_fixer_ids=self.get_patcher_setting("include_fixer_ids"),
             include_fixer_families=self.get_patcher_setting("include_fixer_families"),
@@ -96,7 +84,7 @@ class PatchingRunner(object):
         )
         log = functools.partial(self._patching_utilities.emit_log, level="DEBUG")
         relevant_fixers = self._patching_registry.get_relevant_fixers(
-            current_software_version=current_software_version, log=log, **fixer_settings
+            log=log, **fixer_settings
         )
 
         # REVERSED order is necessary for backwards compatibility, more advanced sorting might be introduced to help

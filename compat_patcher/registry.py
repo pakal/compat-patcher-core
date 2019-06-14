@@ -6,16 +6,18 @@ import six
 
 from compat_patcher.utilities import tuplify_software_version
 
-
 class PatchingRegistry(object):
-    def __init__(self, family_prefix, populate_callable=None):
+    def __init__(self, family_prefix, populate_callable=None, current_software_version=None):
         """
         This registry is used to store and select a set of fixers related to some specific software.
 
         `family_prefix` will be used to constructe family names, along with fixers' reference version.
 
-        `populate_callable`, if provided, is a callable taking the registrry as first argument, and which will be used
-        when calling `populate()` on the registry.
+        `populate_callable`, if provided, is a callable taking the registrry as first argument, and which
+        will be used when calling `populate()` on the registry.
+
+        `current_software_version` may be a version tuple or a string. If it's None, then an override value
+        will have to be provided when calling `get_relevant_fixers`.
         """
         assert family_prefix and isinstance(
             family_prefix, six.string_types
@@ -27,6 +29,17 @@ class PatchingRegistry(object):
         self._is_populated = False
         self._populate_callable = populate_callable
         self._patching_registry = collections.OrderedDict()
+        self._current_software_version = current_software_version
+
+    def _get_current_software_version(self):
+        """
+        Returns a tuple of integers, or a dotted string, representing the current version of the software to be patched.
+        """
+        current_software_version = self._current_software_version
+        if six.callable(current_software_version):
+            current_software_version= current_software_version()
+        assert current_software_version is None or isinstance (current_software_version, (six.string_types, tuple, list)), current_software_version
+        return current_software_version
 
     def populate(self):
         """
@@ -133,11 +146,11 @@ class PatchingRegistry(object):
 
     def get_relevant_fixers(
         self,
-        current_software_version,
         include_fixer_ids="*",
         include_fixer_families=None,
         exclude_fixer_ids=None,
         exclude_fixer_families=None,
+        current_software_version=None,
         log=None,
     ):
         """
@@ -150,6 +163,13 @@ class PatchingRegistry(object):
 
         This method forces a populate() on the registry.
         """
+
+        if not current_software_version:
+            current_software_version = self._get_current_software_version()
+        if not current_software_version:
+            raise ValueError(
+                "PatchingRegistry must be provided a valid current_software_version in its constructor or as `get_relevant_fixers` argument."
+            )
 
         self.populate()
 

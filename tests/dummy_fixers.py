@@ -3,7 +3,8 @@ from compat_patcher.exceptions import SkipFixerException
 
 from compat_patcher.registry import PatchingRegistry
 
-patching_registry = PatchingRegistry(family_prefix="dummy")
+patching_registry = PatchingRegistry(family_prefix="dummy",
+                                     current_software_version=lambda: "5.1",)
 
 
 @patching_registry.register_compatibility_fixer(

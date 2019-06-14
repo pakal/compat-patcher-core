@@ -32,6 +32,19 @@ def test_get_relevant_fixer_ids():
         patching_registry.get_relevant_fixer_ids, log=log
     )
 
+    assert patching_registry._get_current_software_version() == "5.1"
+
+    fixer_ids_v5 = get_relevant_fixer_ids()  # current_software_version defaults to registry's value
+    assert set(fixer_ids_v5) == set(
+        [
+            "fix_something_from_v4",
+            "fix_something_from_v5",
+            "fix_something_upto_v6",
+            "fix_something_always",
+            "fix_something_but_skipped",
+        ]
+    )
+
     fixer_ids_v5 = get_relevant_fixer_ids(current_software_version="5.0")
     assert set(fixer_ids_v5) == set(
         [
@@ -185,3 +198,23 @@ def test_docstring_mandatory_on_fixers():
         )
         def fixer_without_docstring(utils):
             pass
+
+def test_registry_current_software_version():
+    registry = PatchingRegistry(family_prefix="dummy2",
+                              current_software_version=lambda: AAA)
+    with pytest.raises(NameError):
+        registry._get_current_software_version()
+
+    registry = PatchingRegistry(family_prefix="dummy3",
+                              current_software_version=lambda: (1, 2, 3))
+    assert registry._get_current_software_version() == (1, 2, 3)
+
+    registry = PatchingRegistry(family_prefix="dummy4",
+                              current_software_version="8.2.1")
+    assert registry._get_current_software_version() == "8.2.1"
+
+    registry = PatchingRegistry(family_prefix="dummy5")
+    assert registry._get_current_software_version() is None
+    with pytest.raises(ValueError, match="valid current_software_version"):
+        registry.get_relevant_fixers()
+    assert registry.get_relevant_fixers(current_software_version="1") == []
