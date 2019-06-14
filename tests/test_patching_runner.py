@@ -1,11 +1,7 @@
-import pytest
-
 import dummy_module
 from compat_patcher.runner import PatchingRunner
 from compat_patcher.utilities import PatchingUtilities
 from dummy_fixers import patching_registry
-
-
 
 
 def test_patch_software():
@@ -23,7 +19,7 @@ def test_patch_software():
         exclude_fixer_families=None,
     )
 
-    patching_utilities = PatchingUtilities(config_provider=config_provider,)
+    patching_utilities = PatchingUtilities(config_provider=config_provider)
 
     django_patching_runner = PatchingRunner(
         config_provider=config_provider,
@@ -51,7 +47,6 @@ def test_patch_software():
 
     fixers_applied = django_patching_runner.patch_software()
     assert fixers_applied == []  # Already applied so skipped
-
 
 
 '''

@@ -1,16 +1,20 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import collections
-import importlib
 import itertools
 
 import six
 
-from compat_patcher.utilities import tuplify_software_version, _import_attribute_from_dotted_string
+from compat_patcher.utilities import (
+    tuplify_software_version,
+    _import_attribute_from_dotted_string,
+)
 
 
 class PatchingRegistry(object):
-    def __init__(self, family_prefix, populate_callable=None, current_software_version=None):
+    def __init__(
+        self, family_prefix, populate_callable=None, current_software_version=None
+    ):
         """
         This registry is used to store and select a set of fixers related to some specific software.
 
@@ -40,8 +44,10 @@ class PatchingRegistry(object):
         """
         current_software_version = self._current_software_version
         if six.callable(current_software_version):
-            current_software_version= current_software_version()
-        assert current_software_version is None or isinstance (current_software_version, (six.string_types, tuple, list)), current_software_version
+            current_software_version = current_software_version()
+        assert current_software_version is None or isinstance(
+            current_software_version, (six.string_types, tuple, list)
+        ), current_software_version
         return current_software_version
 
     def populate(self):
@@ -89,9 +95,10 @@ class PatchingRegistry(object):
 
         """
 
-        assert isinstance(
-            fixer_reference_version, six.string_types
-        ) and fixer_reference_version, fixer_reference_version  # eg. "1.9"
+        assert (
+            isinstance(fixer_reference_version, six.string_types)
+            and fixer_reference_version
+        ), fixer_reference_version  # eg. "1.9"
         assert fixer_tags is None or isinstance(fixer_tags, list), fixer_tags
 
         fixer_family = self._family_prefix + fixer_reference_version
@@ -195,7 +202,7 @@ class PatchingRegistry(object):
                 and current_software_version < fixer["fixer_applied_from_version"]
             ):  # STRICTLY SMALLER
                 log(
-                    "Skipping fixer %s, useful only in subsequent software versions"
+                    "Skipping fixer %s, useful only in next software versions"
                     % fixer_id
                 )
                 continue
@@ -287,13 +294,17 @@ class MultiPatchingRegistry(object):
             original_registry_reference = registry_reference
 
             if isinstance(registry_reference, six.string_types):
-                registry_reference = _import_attribute_from_dotted_string(registry_reference)
+                registry_reference = _import_attribute_from_dotted_string(
+                    registry_reference
+                )
 
             if six.callable(registry_reference):
                 registry_reference = registry_reference()
 
             if not isinstance(registry_reference, PatchingRegistry):
-                raise ValueError("Wrong registry reference %r" % original_registry_reference)
+                raise ValueError(
+                    "Wrong registry reference %r" % original_registry_reference
+                )
 
             registries.append(registry_reference)
         assert len(registries) == len(registry_references)
@@ -307,12 +318,15 @@ class MultiPatchingRegistry(object):
 
         self.populate()
 
-        return self._flatten(registry.get_relevant_fixers(*args, **kwargs)
-                      for registry in self._registries)
+        return self._flatten(
+            registry.get_relevant_fixers(*args, **kwargs)
+            for registry in self._registries
+        )
 
     def get_all_fixers(self, *args, **kwargs):
-        return self._flatten([registry.get_all_fixers(*args, **kwargs)
-                      for registry in self._registries])
+        return self._flatten(
+            [registry.get_all_fixers(*args, **kwargs) for registry in self._registries]
+        )
 
     def get_fixer_by_id(self, fixer_id, *args, **kwargs):
         """
@@ -325,4 +339,6 @@ class MultiPatchingRegistry(object):
                 pass
         raise KeyError("Fixer %r not found in any patching registries" % fixer_id)
 
-    get_relevant_fixer_ids = six.get_unbound_function(PatchingRegistry.get_relevant_fixer_ids)  # Unmodified
+    get_relevant_fixer_ids = six.get_unbound_function(
+        PatchingRegistry.get_relevant_fixer_ids
+    )  # Unmodified

@@ -8,18 +8,12 @@ from compat_patcher.exceptions import SkipFixerException
 
 
 class PatchingRunner(object):
-    def __init__(
-        self,
-        config_provider,
-        patching_utilities,
-        patching_registry,
-    ):
+    def __init__(self, config_provider, patching_utilities, patching_registry):
         self._all_applied_fixers = list()  # Keep application order
 
         self._config_provider = config_provider
         self._patching_utilities = patching_utilities
         self._patching_registry = patching_registry
-
 
     def _get_patcher_setting(self, name):
         """
