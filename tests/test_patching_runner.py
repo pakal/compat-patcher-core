@@ -1,23 +1,24 @@
 import dummy_module
+from compat_patcher import generic_patch_software, PatchingRegistry
 from compat_patcher.runner import PatchingRunner
-from compat_patcher.utilities import PatchingUtilities
-from dummy_fixers import patching_registry
+from compat_patcher.utilities import PatchingUtilities, WarningsProxy
+from dummy_fixers import patching_registry, patching_registry_ter
+
+CONFIG_PROVIDER_EXAMPLE = dict(
+    logging_level="DEBUG",
+    enable_warnings=True,
+    patch_injected_objects=True,
+    include_fixer_ids="*",
+    include_fixer_families=None,
+    exclude_fixer_ids=None,
+    exclude_fixer_families=None,
+)
 
 
-def test_patch_software():
-    """Load every dependency, and apply registered fixers according to provided settings (or Django settings as a fallback)."""
+def test_runner_patch_software():
 
     del dummy_module.APPLIED_FIXERS[:]
-
-    config_provider = dict(
-        logging_level="DEBUG",
-        enable_warnings=True,
-        patch_injected_objects=True,
-        include_fixer_ids="*",
-        include_fixer_families=None,
-        exclude_fixer_ids=None,
-        exclude_fixer_families=None,
-    )
+    config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
 
     patching_utilities = PatchingUtilities(config_provider=config_provider)
 
@@ -49,32 +50,33 @@ def test_patch_software():
     assert fixers_applied == []  # Already applied so skipped
 
 
-'''
+def test_generic_patch_software():
 
+    del dummy_module.APPLIED_FIXERS[:]
+    config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
 
-FIXME
+    patching_registry_internal = PatchingRegistry(
+        family_prefix="internal", current_software_version=lambda: "100"
+    )
 
-def patch(settings=None):
-    """Load every dependency, and apply registered fixers according to provided settings (or Django settings as a fallback)."""
+    @patching_registry_internal.register_compatibility_fixer(
+        fixer_reference_version="8.3"
+    )
+    def fix_stuffs_internal(utils):
+        "Does something still"
+        assert utils.emit_log  # proper utility
+        dummy_module.APPLIED_FIXERS.append(fix_stuffs_internal.__name__)
 
-    from .config import DjangoConfigProvider
-    from .utilities import DjangoPatchingUtilities
-    from .registry import DjangoPatchingRegistry
-    from .runner import DjangoPatchingRunner
+    warnings_proxy = WarningsProxy()
+    assert not warnings_proxy._patching_utilities
+    assert not patching_registry_internal._is_populated
 
-    config_provider = DjangoConfigProvider(settings=settings)
+    generic_patch_software(
+        config_provider=config_provider,
+        patching_registry=patching_registry_internal,
+        warnings_proxy=warnings_proxy,
+    )
 
-    patching_utilities = DjangoPatchingUtilities(config_provider=config_provider)
-
-    from . import deprecation  # Immediately finish setting up this module
-    deprecation.warnings.set_patching_utilities(patching_utilities)
-
-    from . import fixers  # Force-load every fixer submodule
-    from .registry import django_patching_registry
-
-    django_patching_runner = DjangoPatchingRunner(config_provider=config_provider,
-                                                  patching_utilities=patching_utilities,
-                                                  patching_registry=django_patching_registry,)
-    django_patching_runner.patch_software()
-
-'''
+    assert warnings_proxy._patching_utilities
+    assert patching_registry_internal._is_populated
+    assert dummy_module.APPLIED_FIXERS == ["fix_stuffs_internal"]
