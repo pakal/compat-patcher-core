@@ -76,6 +76,8 @@ def fix_something_from_v7(utils):
     dummy_module.APPLIED_FIXERS.append(fix_something_from_v7.__name__)
 
 
+### -------------------
+
 patching_registry_bis = PatchingRegistry(
     family_prefix="other", current_software_version=lambda: "10"
 )
@@ -111,9 +113,10 @@ patching_registry_bis.register_compatibility_fixer(fixer_reference_version="8.3"
     __fix_something_always
 )
 
+### -------------------
 
 patching_registry_ter = PatchingRegistry(
-    family_prefix="other", current_software_version=lambda: "100"
+    family_prefix="somefamily", current_software_version=lambda: "100"
 )
 
 

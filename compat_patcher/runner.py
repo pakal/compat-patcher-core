@@ -8,9 +8,10 @@ from compat_patcher.exceptions import SkipFixerException
 
 
 class PatchingRunner(object):
-    def __init__(self, config_provider, patching_utilities, patching_registry):
-        self._all_applied_fixers = list()  # Keep application order
 
+    _all_applied_fixers = []  # Class attribute with qualified fixer names!
+
+    def __init__(self, config_provider, patching_utilities, patching_registry):
         self._config_provider = config_provider
         self._patching_utilities = patching_utilities
         self._patching_registry = patching_registry
@@ -22,9 +23,8 @@ class PatchingRunner(object):
         If the `settings` parameters is not None, it has precedence over default settings.
         """
         return self._config_provider[name]
-        ##raise NotImplementedError("PatchingRunner subclass '%s' must implement _get_patcher_setting()" % self.__class__.__name__)
 
-    def get_patcher_setting(self, name):  # FIXME remove "settings" parameter
+    def get_patcher_setting(self, name):
         """
         Returns the value of a patcher setting, and potentially apply a rough validation.
         """
@@ -42,7 +42,10 @@ class PatchingRunner(object):
     def _apply_selected_fixers(self, fixers):
         just_applied_fixers = []
         for fixer in fixers:
-            if fixer["fixer_id"] not in self._all_applied_fixers:
+
+            fixer_qualified_name = "%s.%s" % (fixer["fixer_family"], fixer["fixer_id"])
+
+            if fixer_qualified_name not in self._all_applied_fixers:
                 self._patching_utilities.emit_log(
                     "Compat fixer '{}-{}' is getting applied".format(
                         fixer["fixer_family"], fixer["fixer_id"]
@@ -51,7 +54,7 @@ class PatchingRunner(object):
                 )
                 try:
                     fixer["fixer_callable"](self._patching_utilities)
-                    self._all_applied_fixers.append(fixer["fixer_id"])
+                    self._all_applied_fixers.append(fixer_qualified_name)
                     just_applied_fixers.append(fixer["fixer_id"])
                 except SkipFixerException as e:
                     self._patching_utilities.emit_log(
