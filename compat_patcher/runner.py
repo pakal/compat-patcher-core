@@ -16,6 +16,10 @@ class PatchingRunner(object):
         self._patching_utilities = patching_utilities
         self._patching_registry = patching_registry
 
+    @classmethod
+    def _clear_all_applied_fixers(cls):  # For testing only!
+        del cls._all_applied_fixers[:]
+
     def _get_patcher_setting(self, name):
         """
         Returns the value of a patcher setting, without necessarily validating it.
@@ -43,7 +47,7 @@ class PatchingRunner(object):
         just_applied_fixers = []
         for fixer in fixers:
 
-            fixer_qualified_name = "%s.%s" % (fixer["fixer_family"], fixer["fixer_id"])
+            fixer_qualified_name = fixer["fixer_qualified_name"]
 
             if fixer_qualified_name not in self._all_applied_fixers:
                 self._patching_utilities.emit_log(

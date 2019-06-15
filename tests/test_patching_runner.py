@@ -18,6 +18,8 @@ CONFIG_PROVIDER_EXAMPLE = dict(
 
 def test_runner_patch_software():
 
+    PatchingRunner._clear_all_applied_fixers()  # Important
+
     del dummy_module.APPLIED_FIXERS[:]
     config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
 
@@ -63,6 +65,8 @@ def test_runner_patch_software():
 
 def test_generic_patch_software():
 
+    PatchingRunner._clear_all_applied_fixers()  # Important
+
     del dummy_module.APPLIED_FIXERS[:]
     config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
 
@@ -94,6 +98,9 @@ def test_generic_patch_software():
 
 
 def test_fixer_idempotence_through_runner():
+
+    PatchingRunner._clear_all_applied_fixers()  # Important
+
     del dummy_module.APPLIED_FIXERS[:]
     config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
 

@@ -135,6 +135,7 @@ class PatchingRegistry(object):
                 fixer_applied_upto_version=fixer_applied_upto_version,
                 feature_supported_from_version=feature_supported_from_version,
                 feature_supported_upto_version=feature_supported_upto_version,
+                fixer_qualified_name="%s|%s" % (fixer_family, fixer_id)
             )
 
             assert fixer_id not in self._patching_registry, (
@@ -196,6 +197,7 @@ class PatchingRegistry(object):
 
         for fixer_id, fixer in self._patching_registry.items():
             assert fixer_id == fixer["fixer_id"], fixer
+            fixer_qualified_name = fixer["fixer_qualified_name"]
 
             if (
                 fixer["fixer_applied_from_version"] is not None
@@ -221,7 +223,7 @@ class PatchingRegistry(object):
 
                 included = False
                 if include_fixer_ids == ALL or (
-                    include_fixer_ids and fixer_id in include_fixer_ids
+                    include_fixer_ids and (fixer_id in include_fixer_ids or fixer_qualified_name in include_fixer_ids)
                 ):
                     included = True
                 if include_fixer_families == ALL or (
@@ -238,7 +240,7 @@ class PatchingRegistry(object):
                     continue
 
                 if exclude_fixer_ids == ALL or (
-                    exclude_fixer_ids and fixer_id in exclude_fixer_ids
+                    exclude_fixer_ids and (fixer_id in exclude_fixer_ids or fixer_qualified_name in exclude_fixer_ids)
                 ):
                     log("Skipping fixer %s, excluded by patcher settings" % fixer_id)
                     continue
@@ -258,9 +260,11 @@ class PatchingRegistry(object):
 
         return relevant_fixers
 
-    def get_relevant_fixer_ids(self, *args, **kwargs):
-        fixers = self.get_relevant_fixers(*args, **kwargs)
-        return [f["fixer_id"] for f in fixers]
+    def get_relevant_fixer_ids(self, qualified=False, **kwargs):
+        """"If `qualified` is True, returns a fixers IDs dot-prefixed with the family name."""
+        fixers = self.get_relevant_fixers(**kwargs)
+        field_name = "fixer_qualified_name" if qualified else "fixer_id"
+        return [f[field_name] for f in fixers]
 
 
 class MultiPatchingRegistry(object):

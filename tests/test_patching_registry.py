@@ -25,6 +25,7 @@ def test_registry_populate():
 
 
 def test_get_relevant_fixer_ids():
+
     def log(msg):
         print(msg)
 
@@ -48,8 +49,20 @@ def test_get_relevant_fixer_ids():
     )
     assert len(patching_registry.get_relevant_fixers()) == 5  # Same
 
-    fixer_ids_v5 = get_relevant_fixer_ids(current_software_version="5.0")
-    assert set(fixer_ids_v5) == set(
+    fixer_ids = get_relevant_fixer_ids(current_software_version="5.0",
+                                       qualified=True)
+    assert set(fixer_ids) == set(
+        [
+            "dummy4.0|fix_something_from_v4",
+            "dummy5.0|fix_something_from_v5",
+            "dummy5.0|fix_something_upto_v6",
+            "dummy5.0|fix_something_always",
+            "dummy5.0|fix_something_but_skipped",
+        ]
+    )
+
+    fixer_ids = get_relevant_fixer_ids(current_software_version="5.0")
+    assert set(fixer_ids) == set(
         [
             "fix_something_from_v4",
             "fix_something_from_v5",
@@ -155,6 +168,24 @@ def test_get_relevant_fixer_ids():
             "fix_something_but_skipped",
         ]
     )
+
+    fixer_settings = dict(
+        include_fixer_ids=["dummy4.0|fix_something_from_v4"],
+        include_fixer_families=["dummy5.0"],
+        exclude_fixer_ids=["dummy5.0|fix_something_always"],
+    )
+    fixer_ids = get_relevant_fixer_ids(
+        current_software_version="5.5.4", qualified=True, **fixer_settings
+    )
+    assert set(fixer_ids) ==  set(
+            [
+                "dummy4.0|fix_something_from_v4",
+                "dummy5.0|fix_something_from_v5",
+                "dummy5.0|fix_something_upto_v6",
+                "dummy5.0|fix_something_but_skipped",
+            ]
+        )
+
 
     fixer_settings = dict(
         include_fixer_ids=["fix_something_from_v4"],
