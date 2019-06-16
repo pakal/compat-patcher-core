@@ -38,9 +38,11 @@ def detuplify_software_version(version):
 
 
 class WarningsProxy(object):
-    """Generate a replacement for stdlib "warnings" package, which behaves according to compat patcher settings.
+    """Generate a replacement for stdlib "warnings" package, which behaves according
+    to compat patcher settings.
 
-    This proxy should be provided the PatchingUtilities instance as soon as this one is ready.
+    This proxy should be provided the PatchingUtilities instance as soon as this one
+    is ready.
     """
 
     _patching_utilities = None
@@ -63,8 +65,8 @@ def ensure_no_stdlib_warnings(
     forbidden_phrases=("import warnings", "from warnings"),
 ):
     """
-    This utility should be used by each compat patcher user, to ensure all shims only go through
-    the configurable compat-patcher warnings system.
+    This utility should be used by each compat patcher user, to ensure all shims only
+    go through the configurable compat-patcher warnings system.
 
     Returns the list of checked python source files.
     """
@@ -100,7 +102,8 @@ class PatchingUtilities(object):
 
     def __init__(self, config_provider):
 
-        # We force extraction of values, in case config_provider is a lazy instance and not just a dict
+        # We force extraction of values, in case config_provider is a lazy instance
+        # and not just a dict
         config = {
             name: config_provider[name]
             for name in ["logging_level", "enable_warnings", "patch_injected_objects"]
@@ -109,7 +112,9 @@ class PatchingUtilities(object):
         self.apply_settings(config)
 
     def apply_settings(self, settings):
-        """This method can be called at runtime, mainly to alter the emission of logs and Warnings."""
+        """This method can be called at runtime, mainly to alter the emission of logs
+        and Warnings.
+        """
         if "logging_level" in settings:
             assert settings["logging_level"] is None or hasattr(
                 logging, settings["logging_level"]
@@ -136,9 +141,11 @@ class PatchingUtilities(object):
         )
 
     def _patch_injected_object(self, object_to_patch):
-        """Mark shim object with a custom boolean attribute, to help identify it via introspection.
+        """Mark shim object with a custom boolean attribute, to help identify it via
+        introspection.
 
-        Returns a boolean indicating whether the marking worked (some objects don't have a writable __dict__).
+        Returns a boolean indicating whether the marking worked (some objects don't
+        have a writable __dict__).
         """
         assert object_to_patch not in (True, False, None), object_to_patch
         if self._patch_injected_objects:
@@ -248,8 +255,8 @@ class PatchingUtilities(object):
 def ensure_all_fixers_have_a_test_under_pytest(
     config, items, patching_registry, _fail_fast=False
 ):
-    """Call this pytest hook from a conftest.py to ensure your own test suite covers all your registered fixers,
-    like so::
+    """Call this pytest hook from a conftest.py to ensure your own test suite covers
+    all your registered fixers, like so::
 
         def pytest_collection_modifyitems(config, items):
             from yourownpackage.registry import your_patching_registry

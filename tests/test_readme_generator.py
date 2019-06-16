@@ -14,7 +14,7 @@ def test_generate_readme(tmp_path):
 
     readme_out_file = tmp_path / "Readme.txt"
 
-    print (readme_in_file, readme_out_file)
+    print(readme_in_file, readme_out_file)
     generate_readme(str(readme_in_file), str(readme_out_file), patching_registry)
 
     content = readme_out_file.read_text()

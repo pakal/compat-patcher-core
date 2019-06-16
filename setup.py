@@ -36,7 +36,7 @@ needs_pytest = {"pytest", "test", "ptr"}.intersection(sys.argv)
 setup_requires = ["pytest-runner"] if needs_pytest else []
 
 setup(
-    name="compat-patcher",
+    name="compat-patcher-core",
     version=read_file("VERSION"),
     author="Pascal Chambon & others",
     author_email="pythoniks@gmail.com",
@@ -50,5 +50,5 @@ setup(
     install_requires=["six"],
     extras_require=None,
     setup_requires=setup_requires,
-    tests_require=["pytest", "pytest-cov", "docutils"],
+    tests_require=["pytest", "pytest-cov", "python-pythonpath", "docutils"],
 )

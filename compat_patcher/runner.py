@@ -88,8 +88,8 @@ class PatchingRunner(object):
             log=log, **fixer_settings
         )
 
-        # REVERSED order is necessary for backwards compatibility, more advanced sorting might be introduced to help
-        # forward-compatibility fixers...
+        # REVERSED order is necessary for backwards compatibility, more advanced
+        # sorting might be introduced to help forward-compatibility fixers...
         relevant_fixers.sort(
             key=lambda x: (x["fixer_reference_version"], x["fixer_id"]), reverse=True
         )
@@ -101,7 +101,6 @@ class PatchingRunner(object):
 
         Returns the list of fixers that were successfully applied during this call.
         """
-        # print("Fixers are:", registry.patching_registry)
         relevant_fixers = self._get_sorted_relevant_fixers()
         just_applied_fixers = self._apply_selected_fixers(relevant_fixers)
         return just_applied_fixers

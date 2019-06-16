@@ -79,20 +79,23 @@ class PatchingRegistry(object):
         fixer_tags=None,
     ):
         """
-        Registers a compatibility fixer, which will be activated only if current software version
-        is >= `fixer_applied_from_version` and < `fixer_applied_upto_version` (let them be None to have no limit).
+        Registers a compatibility fixer, which will be activated only if current
+        software version is >= `fixer_applied_from_version` and <
+        `fixer_applied_upto_version` (let them be None to have no limit).
 
-        `fixer_reference_version` is used to sort fixers when applying them, and to derive the name of the fixers family concerned.
+        `fixer_reference_version` is used to sort fixers when applying them, and to
+        derive the name of the fixers family concerned.
 
-        `feature_supported_from_version` (included) and `feature_supported_upto_version` (excluded) may be used to limit
-        the range of software versions for which related unit-tests are expected to work (i.e versions
-        for which the feature is available, either as a monkey-paching or as standard code).
+        `feature_supported_from_version` (included) and
+        `feature_supported_upto_version` (excluded) may be used to limit the range of
+        software versions for which related unit-tests are expected to work (i.e
+        versions for which the feature is available, either as a monkey-paching or as
+        standard code).
 
         Version identifiers must be dotted strings, eg. "1.9.1".
 
-        `fixer_tags` is a **list** of strings, which can be used to separate fixers which will be applied at different moments of software startup.
-
-
+        `fixer_tags` is a **list** of strings, which can be used to separate fixers
+        which will be applied at different moments of software startup.
         """
 
         assert (
@@ -163,10 +166,12 @@ class PatchingRegistry(object):
         log=None,
     ):
         """
-        Returns the list of fixers to be applied for the target software version, based on the
-        metadata of fixers, as well as inclusion/exclusion lists provided as arguments.
+        Returns the list of fixers to be applied for the target software version,
+        based on the metadata of fixers, as well as inclusion/exclusion lists
+        provided as arguments.
 
-        For inclusion/exclusion filters, a special "*" value means "all fixers", else a list of strings is expected.
+        For inclusion/exclusion filters, a special "*" value means "all fixers",
+        else a list of strings is expected.
 
         An output callable `log` may be provided, expecting a string as argument.
 
@@ -177,7 +182,8 @@ class PatchingRegistry(object):
             current_software_version = self._get_current_software_version()
         if not current_software_version:
             raise ValueError(
-                "PatchingRegistry must be provided a valid current_software_version in its constructor or as `get_relevant_fixers` argument."
+                "PatchingRegistry must be provided a valid current_software_version "
+                "in its constructor or as `get_relevant_fixers` argument."
             )
 
         self.populate()
@@ -223,7 +229,8 @@ class PatchingRegistry(object):
 
                 included = False
                 if include_fixer_ids == ALL or (
-                    include_fixer_ids and (fixer_id in include_fixer_ids or fixer_qualified_name in include_fixer_ids)
+                    include_fixer_ids and (fixer_id in include_fixer_ids or
+                                           fixer_qualified_name in include_fixer_ids)
                 ):
                     included = True
                 if include_fixer_families == ALL or (
@@ -240,7 +247,8 @@ class PatchingRegistry(object):
                     continue
 
                 if exclude_fixer_ids == ALL or (
-                    exclude_fixer_ids and (fixer_id in exclude_fixer_ids or fixer_qualified_name in exclude_fixer_ids)
+                    exclude_fixer_ids and (fixer_id in exclude_fixer_ids or
+                                           fixer_qualified_name in exclude_fixer_ids)
                 ):
                     log("Skipping fixer %s, excluded by patcher settings" % fixer_id)
                     continue
@@ -269,12 +277,15 @@ class PatchingRegistry(object):
 
 class MultiPatchingRegistry(object):
     """
-    This patching registry wraps a set of other registries, each having its own fixers and current software version.
+    This patching registry wraps a set of other registries, each having its own
+    fixers and current software version.
 
-    It concatenates and returns selected fixers on demand, assuming that they are compatible with each other.
+    It concatenates and returns selected fixers on demand, assuming that they are
+    compatible with each other.
 
-    Forcing a `current_software_version` as parameter of `get_relevant_fixers` is still possible,
-    but beware that these registries all deal with the same software stack in this case.
+    Forcing a `current_software_version` as parameter of `get_relevant_fixers` is
+    still possible, but beware that these registries all deal with the same software
+    stack in this case.
     """
 
     def __init__(self, registries):

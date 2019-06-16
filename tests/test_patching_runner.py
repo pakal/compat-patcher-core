@@ -3,7 +3,7 @@ from compat_patcher import generic_patch_software, PatchingRegistry
 from compat_patcher.registry import MultiPatchingRegistry
 from compat_patcher.runner import PatchingRunner
 from compat_patcher.utilities import PatchingUtilities, WarningsProxy
-from dummy_fixers import patching_registry, patching_registry_ter, patching_registry_bis
+from dummy_fixers import patching_registry, patching_registry_bis
 
 CONFIG_PROVIDER_EXAMPLE = dict(
     logging_level="DEBUG",

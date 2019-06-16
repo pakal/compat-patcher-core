@@ -1,9 +1,10 @@
-"""
-This module allows to create aliases between packages, so that one
-can import a module under a different name (mainly for retrocompatibility purpose).
+"""This module allows to create aliases between packages, so that one can import a
+module under a different name (mainly for retrocompatibility purpose).
 
-Note that it is NOT about aliasing local references to modules after import, eg. with "from package import module_name as other_module_name".
-Here we really deal with aliasing the "full name" of the module, as it will appear in sys.modules.
+Note that it is NOT about aliasing local references to modules after import, eg. with
+"from package import module_name as other_module_name".
+Here we really deal with aliasing the "full name" of the module, as it will appear in
+sys.modules.
 
 There are different ways of implementing "import aliases":
 
@@ -11,18 +12,21 @@ There are different ways of implementing "import aliases":
 - using a custom module loader which creates a wrapper class (with setattr,
   getattr etc...), and injects it as a proxy in sys.modules[alias]
 - using a custom module loader, which simply copies a reference to the real module
-  into sys.modules (and on recent python version, updates its __spec__ to gives hints about this operation).
-  *THIS* is the way it is currently implemented, so that imported modules keep being SINGLETONS whatever their
+  into sys.modules (and on recent python version, updates its __spec__ to gives hints
+  about this operation).
+  *THIS* is the way it is currently implemented, so that imported modules keep being
+  SINGLETONS whatever their
   possible aliases.
 
-Beware about not creating loops with your aliases, as this could trigger infinite recursions.
+Beware about not creating loops with your aliases, as this could trigger infinite
+recursions.
 """
 
 import contextlib
 import importlib
 import sys
 
-# maps ALIASES to REAL MODULES
+# Maps ALIASES to REAL MODULES
 MODULES_ALIASES_REGISTRY = []
 
 
@@ -31,7 +35,6 @@ def enrich_import_error(alias_name):
     try:
         yield
     except ImportError as e:
-        # print(vars(e), str(e), dir(e), e.args)
         # ImportError exception has different structure between py2k and py3k
         enrich_message = lambda msg: "%s (when loading alias name '%s')" % (
             msg,
@@ -59,8 +62,7 @@ def register_module_alias(alias_name, real_name):
 
 def _get_module_alias_real_name(fullname):
     """
-    returns the real name of module (when fullname is an alias name)
-    or None.
+    Returns the real name of module (when fullname is an alias name) or None.
     """
     for k, v in MODULES_ALIASES_REGISTRY:
         if (k == fullname) or fullname.startswith(k + "."):
@@ -85,8 +87,8 @@ except ImportError:
 
         def load_module(self, name):
             if name in sys.modules:
-                return sys.modules[name]  # shortcut
-            # we let the standard machinery handle sys.modules, module attrs etc.
+                return sys.modules[name]  # Shortcut
+            # We let the standard machinery handle sys.modules, module attrs etc.
             with enrich_import_error(self.alias_name):
                 module = importlib.import_module(self.real_name, package=None)
             sys.modules[name] = module  # cached
@@ -95,9 +97,6 @@ except ImportError:
     class ModuleAliasFinder(object):
         @classmethod
         def find_module(self, fullname, *args, **kwargs):
-
-            # print("OldMetaPathFinder FINDMODULE", fullname, args, kwargs)
-
             real_name = _get_module_alias_real_name(fullname)
             if real_name is None:
                 return None  # no aliased module is known
@@ -119,7 +118,7 @@ else:
             self.alias_name = alias_name
 
         def create_module(self, spec):
-            # we do the real loading of aliased module here
+            # We do the real loading of aliased module here
             with enrich_import_error(self.alias_name):
                 module = importlib.import_module(self.real_name, package=None)
             assert module.__name__ == self.real_name, module.__name__
