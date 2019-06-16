@@ -12,12 +12,13 @@ def test_import_proxifier():
     install_import_proxifier()
     install_import_proxifier()  # idempotent
 
-    register_module_alias("json.tool_alias", "json.tool")
-    register_module_alias("mylogging", "logging")
-    register_module_alias("mylogging", "logging")
-    register_module_alias("infinite_recursion", "infinite_recursion2")
-    register_module_alias("infinite_recursion2", "infinite_recursion")
-    register_module_alias("unexisting_alias", "unexisting_module")
+    register_module_alias("json.tool_alias", real_name="json.tool")
+    register_module_alias("mylogging", real_name="logging")
+    register_module_alias("mylogging", real_name="logging")
+    register_module_alias("infinite_recursion", real_name="infinite_recursion2")
+    register_module_alias("infinite_recursion2", real_name="infinite_recursion")
+    register_module_alias("unexisting_alias", real_name="unexisting_module")
+    register_module_alias("noparent.newmodule", real_name="csv")
 
     fullname = "logging.handlers"
     # print ("ALREADY THERE:", fullname, fullname in sys.modules)
@@ -70,7 +71,7 @@ def test_import_proxifier():
         assert "unexisting_alias" in str(e), (str(e), vars(e))
         assert "unexisting_module" in str(e), str(e)
     else:
-        raise RuntimeError("import error noy raised")
+        raise RuntimeError("import error not raised for unexisting_alias")
 
     try:
         import unexisting_module
@@ -78,4 +79,12 @@ def test_import_proxifier():
         assert "unexisting_alias" not in str(e), str(e)
         assert "unexisting_module" in str(e), str(e)
     else:
-        raise RuntimeError("import error noy raised")
+        raise RuntimeError("import error not raised for unexisting_module")
+
+    try:
+        import noparent.newmodule
+    except ImportError as e:
+        assert "No module named noparent.newmodule" in str(e), str(e)
+    else:
+        raise RuntimeError("import error not raised for noparent.newmodule")
+
