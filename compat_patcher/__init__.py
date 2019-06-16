@@ -3,7 +3,12 @@ import threading as _threading
 from .exceptions import SkipFixerException
 from .registry import PatchingRegistry, MultiPatchingRegistry
 from .runner import PatchingRunner
-from .utilities import PatchingUtilities, WarningsProxy, tuplify_software_version, detuplify_software_version
+from .utilities import (
+    PatchingUtilities,
+    WarningsProxy,
+    tuplify_software_version,
+    detuplify_software_version,
+)
 
 
 def generic_patch_software(
@@ -60,8 +65,10 @@ def make_safe_patcher(f):
     with this utility.
     """
     import functools
+
     @functools.wraps(f)
     def inner(*args, **kwargs):
         with PATCHING_LOCK:
             return f(*args, **kwargs)
+
     return inner

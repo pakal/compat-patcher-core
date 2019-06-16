@@ -80,10 +80,7 @@ class PatchingUtilities(object):
         # We force extraction of values, in case config_provider is a lazy instance
         # and not just a dict
         assert config_provider, config_provider
-        config = {
-            name: config_provider[name]
-            for name in self.config_keys_used
-        }
+        config = {name: config_provider[name] for name in self.config_keys_used}
 
         self.apply_config(config)
 
@@ -98,9 +95,7 @@ class PatchingUtilities(object):
             ), config["logging_level"]
             self._logging_level = config["logging_level"]
         if "enable_warnings" in config:
-            assert config["enable_warnings"] in (True, False), config[
-                "enable_warnings"
-            ]
+            assert config["enable_warnings"] in (True, False), config["enable_warnings"]
             self._enable_warnings = config["enable_warnings"]
         if "patch_injected_objects" in config:
             patch_injected_objects = config["patch_injected_objects"]
@@ -181,7 +176,7 @@ class PatchingUtilities(object):
         setattr(target_object, target_callable_name, patch_callable)
 
     def inject_callable_alias(
-        self, target_object, target_attrname, source_object, source_attrname,
+        self, target_object, target_attrname, source_object, source_attrname
     ):
         """
         Create and inject an alias for the source callable (not a class), which also

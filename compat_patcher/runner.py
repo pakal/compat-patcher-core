@@ -15,8 +15,12 @@ class PatchingRunner(object):
     """
 
     # Helpful for autodocumentation
-    config_keys_used = ["include_fixer_ids", "include_fixer_families",
-                        "exclude_fixer_ids", "exclude_fixer_families"]
+    config_keys_used = [
+        "include_fixer_ids",
+        "include_fixer_families",
+        "exclude_fixer_ids",
+        "exclude_fixer_families",
+    ]
 
     _all_applied_fixers = []  # Class attribute with qualified fixer names!
 

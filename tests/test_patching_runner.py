@@ -1,11 +1,14 @@
 import dummy_module
-from compat_patcher import generic_patch_software, PatchingRegistry, DEFAULT_CONFIG, \
-    make_safe_patcher
+from compat_patcher import (
+    generic_patch_software,
+    PatchingRegistry,
+    DEFAULT_CONFIG,
+    make_safe_patcher,
+)
 from compat_patcher.registry import MultiPatchingRegistry
 from compat_patcher.runner import PatchingRunner
 from compat_patcher.utilities import PatchingUtilities, WarningsProxy
 from dummy_fixers import patching_registry, patching_registry_bis
-
 
 
 def test_runner_patch_software():
@@ -141,9 +144,12 @@ def test_make_safe_patcher():
         value = shared_value[0]
         time.sleep(0.01)
         shared_value[0] = value + 1
+
     assert "slooooow" in slow_func.__doc__  # Properly wrapped
 
-    threads = [threading.Thread(target=slow_func, kwargs=dict(myattr=22)) for i in range(5)]
+    threads = [
+        threading.Thread(target=slow_func, kwargs=dict(myattr=22)) for i in range(5)
+    ]
     [t.start() for t in threads]
     [t.join() for t in threads]
 

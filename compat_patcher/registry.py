@@ -143,7 +143,7 @@ class PatchingRegistry(object):
                 fixer_applied_upto_version=fixer_applied_upto_version,
                 feature_supported_from_version=feature_supported_from_version,
                 feature_supported_upto_version=feature_supported_upto_version,
-                fixer_qualified_name="%s|%s" % (fixer_family, fixer_id)
+                fixer_qualified_name="%s|%s" % (fixer_family, fixer_id),
             )
 
             assert fixer_id not in self._patching_registry, (
@@ -237,8 +237,11 @@ class PatchingRegistry(object):
 
                 included = False
                 if include_fixer_ids == ALL or (
-                    include_fixer_ids and (fixer_id in include_fixer_ids or
-                                           fixer_qualified_name in include_fixer_ids)
+                    include_fixer_ids
+                    and (
+                        fixer_id in include_fixer_ids
+                        or fixer_qualified_name in include_fixer_ids
+                    )
                 ):
                     included = True
                 if include_fixer_families == ALL or (
@@ -255,8 +258,11 @@ class PatchingRegistry(object):
                     continue
 
                 if exclude_fixer_ids == ALL or (
-                    exclude_fixer_ids and (fixer_id in exclude_fixer_ids or
-                                           fixer_qualified_name in exclude_fixer_ids)
+                    exclude_fixer_ids
+                    and (
+                        fixer_id in exclude_fixer_ids
+                        or fixer_qualified_name in exclude_fixer_ids
+                    )
                 ):
                     log("Skipping fixer %s, excluded by patcher config" % fixer_id)
                     continue

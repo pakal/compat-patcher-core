@@ -55,9 +55,7 @@ def _create_fixer_list(all_fixers, grid):
             [
                 "**{}** (:code:`{}`)".format(*format_tuple),
                 fixer["fixer_family"],
-                detuplify_software_version(
-                    fixer["fixer_applied_from_version"]
-                ) or "",
+                detuplify_software_version(fixer["fixer_applied_from_version"]) or "",
                 detuplify_software_version(fixer["fixer_applied_upto_version"]) or "",
             ]
         )
@@ -88,11 +86,12 @@ def generate_readme(input_filename, output_filename, patching_registry):
     with open(input_filename, mode="r", encoding="utf-8") as readme_manual:
         readme_manual_content = readme_manual.read()
 
-    result = readme_manual_content+"\n\n"
+    result = readme_manual_content + "\n\n"
     result += "Table of fixers\n===============\n\n"
-    result += "There are currently {} available fixers.\n\n".format(len(patching_registry.get_all_fixers()))
+    result += "There are currently {} available fixers.\n\n".format(
+        len(patching_registry.get_all_fixers())
+    )
     result += _make_rst_table(patching_registry)
 
     with open(output_filename, mode="w", encoding="utf-8") as readme_final:
         readme_final.write(result)
-

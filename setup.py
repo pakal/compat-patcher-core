@@ -48,9 +48,14 @@ setup(
     long_description=read_file("README.rst"),
     packages=packages,
     install_requires=["six"],
-    extras_require={
-            'build_sphinx': ["sphinx", "sphinx_rtd_theme"],
-        },
+    extras_require={"build_sphinx": ["sphinx", "sphinx_rtd_theme"]},
     setup_requires=setup_requires,
-    tests_require=["pytest", "pytest-cov", "pytest-pythonpath", "docutils"],
+    tests_require=[
+        "pytest",
+        "pytest-cov",
+        "pytest-pythonpath",
+        "docutils",
+        "pylint",
+        "pylint-quotes",
+    ],
 )
