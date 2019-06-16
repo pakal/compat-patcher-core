@@ -59,7 +59,7 @@ def test_patch_injected_object():
     import csv.mymodule  # Submodules are OK too
 
     patching_utilities.inject_module("noparent.mymodule", dummy_module)
-    with pytest.raises(ImportError, match="No module named noparent.module"):
+    with pytest.raises(ImportError, match="No module named"):
         import noparent.module  # Parent module "noparent" must exist first
 
     assert getattr(new_dummy_module, default_patch_marker) == True
