@@ -1,3 +1,4 @@
+import threading as _threading
 
 from .exceptions import SkipFixerException
 from .registry import PatchingRegistry, MultiPatchingRegistry
@@ -14,8 +15,8 @@ def generic_patch_software(
 ):
     """Load all dependencies, and apply registered fixers according to provided config.
 
-    You can pass custom classes to be instantiated, and/or an existing WarningsProxy which will be updated
-    with the new config as soon as possible.
+    You can provide custom classes to be instantiated instead of default ones, and/or an
+    existing WarningsProxy which will be updated with the new config as soon as possible.
     """
 
     patching_registry.populate()
@@ -44,3 +45,23 @@ DEFAULT_CONFIG = dict(
     exclude_fixer_ids=None,
     exclude_fixer_families=None,
 )
+
+
+#: Lock meant to globally protect all the patching workflow
+PATCHING_LOCK = _threading.RLock()
+
+
+def make_safe_patcher(f):
+    """
+    This decorator makes a patching launcher thread-safe with a recursive lock.
+
+    Other checks and misc. features might be added in the future, so packages using
+    this patching framework should always decorate their main "patch()" entrypoint
+    with this utility.
+    """
+    import functools
+    @functools.wraps(f)
+    def inner(*args, **kwargs):
+        with PATCHING_LOCK:
+            return f(*args, **kwargs)
+    return inner

@@ -1,6 +1,14 @@
 API
 #################
 
+Patching launcher
+===================
+
+.. autofunction:: compat_patcher.generic_patch_software
+
+.. autofunction:: compat_patcher.make_safe_patcher
+
+
 Patching registry
 =========================
 
