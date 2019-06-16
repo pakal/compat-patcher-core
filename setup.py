@@ -50,5 +50,5 @@ setup(
     install_requires=["six"],
     extras_require=None,
     setup_requires=setup_requires,
-    tests_require=["pytest", "pytest-cov"],
+    tests_require=["pytest", "pytest-cov", "docutils"],
 )
