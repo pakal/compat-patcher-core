@@ -4,6 +4,12 @@ API
 Patching launcher
 ===================
 
+Each package implementing a compat-patcher for a specific framework/library should expose a `patch()` function
+at the top level, responsible for the whole process of retrieving configuration, instantiating miscellaneous utilities,
+selecting relevant fixers, and applying them.
+
+**These building blocks are exposed to ease the process fo creating this launcher.**
+
 .. autofunction:: compat_patcher.generic_patch_software
 
 .. autofunction:: compat_patcher.make_safe_patcher

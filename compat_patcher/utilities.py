@@ -126,6 +126,7 @@ class PatchingUtilities(object):
                 return True
             except AttributeError:
                 return False  # properties, bound methods and such can't be modified
+        return None
 
     def emit_log(self, message, level="INFO"):
         """A logger printing to stderr, since at some stages of patching, logging is
@@ -271,7 +272,7 @@ def ensure_no_stdlib_warnings(
 
     analysed_files = []
 
-    for root, subdirs, files in os.walk(source_root):
+    for root, _subdirs, files in os.walk(source_root):
         for f in [x for x in files if x.endswith(".py")]:
             full_path = os.path.join(root, f)
             # print(">> ANALYSING PYTHON FILE", full_path)

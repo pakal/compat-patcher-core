@@ -89,7 +89,7 @@ class PatchingRegistry(object):
         `fixer_applied_upto_version` (let them be None to have no limit).
 
         `fixer_reference_version` is used to sort fixers when applying them, and to
-        derive the name of the fixers family concerned.
+        derive the name of the family of fixers concerned.
 
         `feature_supported_from_version` (included) and
         `feature_supported_upto_version` (excluded) may be used to limit the range of
@@ -97,9 +97,10 @@ class PatchingRegistry(object):
         versions for which the feature is available, either as a monkey-paching or as
         standard code).
 
-        Version identifiers must be dotted strings, eg. "1.9.1".
+        Version identifiers must be dotted strings, eg. "1.9.1". None means "no limit"
+        here.
 
-        `fixer_tags` is a **list** of strings, which can be used to separate fixers
+        `fixer_tags` is a **list** of strings, which can be used to differentiate fixers
         which will be applied at different moments of software startup.
         """
 

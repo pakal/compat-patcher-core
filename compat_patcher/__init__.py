@@ -18,7 +18,8 @@ def generic_patch_software(
     patching_runner_class=PatchingRunner,
     warnings_proxy=None,
 ):
-    """Load all dependencies, and apply registered fixers according to provided config.
+    """Load all dependencies, and apply relevant fixers from the `patching_registry`,
+    according to the settings of the provided `config_provider`.
 
     You can provide custom classes to be instantiated instead of default ones, and/or an
     existing WarningsProxy which will be updated with the new config as soon as possible.
