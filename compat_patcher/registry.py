@@ -12,20 +12,23 @@ from compat_patcher.utilities import (
 
 
 class PatchingRegistry(object):
+    """
+    This registry is used to store and select a set of fixers related to some
+    specific software.
+
+    `family_prefix` will be used to constructe family names, along with the software
+    reference version provided by the fixer.
+
+    `populate_callable`, if provided, is a callable taking the registry as first
+    argument, and which will be called by `populate()`.
+
+    `current_software_version` may be a version tuple or a string. If it's None,
+    then an override value will have to be provided when calling `get_relevant_fixers`.
+    """
+
     def __init__(
         self, family_prefix, populate_callable=None, current_software_version=None
     ):
-        """
-        This registry is used to store and select a set of fixers related to some specific software.
-
-        `family_prefix` will be used to constructe family names, along with fixers' reference version.
-
-        `populate_callable`, if provided, is a callable taking the registrry as first argument, and which
-        will be used when calling `populate()` on the registry.
-
-        `current_software_version` may be a version tuple or a string. If it's None, then an override value
-        will have to be provided when calling `get_relevant_fixers`.
-        """
         assert family_prefix and isinstance(
             family_prefix, six.string_types
         ), family_prefix
@@ -40,7 +43,8 @@ class PatchingRegistry(object):
 
     def _get_current_software_version(self):
         """
-        Returns a tuple of integers, or a dotted string, representing the current version of the software to be patched.
+        Returns a tuple of integers, or a dotted string, representing the current
+        version of the software to be patched.
         """
         current_software_version = self._current_software_version
         if six.callable(current_software_version):
@@ -52,7 +56,8 @@ class PatchingRegistry(object):
 
     def populate(self):
         """
-        Trigger the registration of lazy fixers, which might be in other submodules, or waiting in factory functions.
+        Trigger the registration of potential lazy fixers, which might be in other
+        submodules, or waiting in factory functions.
         """
         res = None
         if not self._is_populated:
@@ -79,7 +84,7 @@ class PatchingRegistry(object):
         fixer_tags=None,
     ):
         """
-        Registers a compatibility fixer, which will be activated only if current
+        Register a compatibility fixer, which will be activated only if current
         software version is >= `fixer_applied_from_version` and <
         `fixer_applied_upto_version` (let them be None to have no limit).
 
@@ -151,9 +156,11 @@ class PatchingRegistry(object):
         return _register_simple_fixer
 
     def get_all_fixers(self):
+        """Return the list of all fixers (as dicts) known by this registry."""
         return list(self._patching_registry.values())
 
     def get_fixer_by_id(self, fixer_id):
+        """Return the fixer having this (unqualified) ID, or raise KeyError."""
         return self._patching_registry[fixer_id]
 
     def get_relevant_fixers(
@@ -166,14 +173,15 @@ class PatchingRegistry(object):
         log=None,
     ):
         """
-        Returns the list of fixers to be applied for the target software version,
-        based on the metadata of fixers, as well as inclusion/exclusion lists
-        provided as arguments.
+        Return the list of fixers (as dicts) to be applied for the target software
+        version, based on the metadata of fixers, as well as inclusion/exclusion
+        lists provided as arguments.
 
         For inclusion/exclusion filters, a special "*" value means "all fixers",
         else a list of strings is expected.
 
-        An output callable `log` may be provided, expecting a string as argument.
+        An output callable `log` may be provided, expecting a string as argument,
+        to debug the reasons why some fixers weren't selected.
 
         This method forces a populate() on the registry.
         """
@@ -241,7 +249,7 @@ class PatchingRegistry(object):
 
                 if not included:
                     log(
-                        "Skipping fixer %s, having neither id nor family (%s) included by patcher settings"
+                        "Skipping fixer %s, having neither id nor family (%s) included by patcher config"
                         % (fixer_id, fixer["fixer_family"])
                     )
                     continue
@@ -250,7 +258,7 @@ class PatchingRegistry(object):
                     exclude_fixer_ids and (fixer_id in exclude_fixer_ids or
                                            fixer_qualified_name in exclude_fixer_ids)
                 ):
-                    log("Skipping fixer %s, excluded by patcher settings" % fixer_id)
+                    log("Skipping fixer %s, excluded by patcher config" % fixer_id)
                     continue
 
                 if exclude_fixer_families == ALL or (
@@ -258,7 +266,7 @@ class PatchingRegistry(object):
                     and fixer["fixer_family"] in exclude_fixer_families
                 ):
                     log(
-                        "Skipping fixer %s, having family %s excluded by patcher settings"
+                        "Skipping fixer %s, having family %s excluded by patcher config"
                         % (fixer_id, fixer["fixer_family"])
                     )
                     continue
@@ -269,7 +277,9 @@ class PatchingRegistry(object):
         return relevant_fixers
 
     def get_relevant_fixer_ids(self, qualified=False, **kwargs):
-        """"If `qualified` is True, returns a fixers IDs dot-prefixed with the family name."""
+        """"Same as `get_relevant_fixers`, but only returns IDs of selected fixers.
+
+        If `qualified` is True, returns a fixers IDs dot-prefixed with the family name."""
         fixers = self.get_relevant_fixers(**kwargs)
         field_name = "fixer_qualified_name" if qualified else "fixer_id"
         return [f[field_name] for f in fixers]
@@ -277,15 +287,11 @@ class PatchingRegistry(object):
 
 class MultiPatchingRegistry(object):
     """
-    This patching registry wraps a set of other registries, each having its own
+    This patching registry wraps a list of other registries, each having its own
     fixers and current software version.
 
     It concatenates and returns selected fixers on demand, assuming that they are
     compatible with each other.
-
-    Forcing a `current_software_version` as parameter of `get_relevant_fixers` is
-    still possible, but beware that these registries all deal with the same software
-    stack in this case.
     """
 
     def __init__(self, registries):
@@ -330,6 +336,13 @@ class MultiPatchingRegistry(object):
         return list(itertools.chain(*list_of_lists))
 
     def get_relevant_fixers(self, *args, **kwargs):
+        """Populate underlying registries, and return the concatenation of their
+        selected fixers.
+
+        Forcing a `current_software_version` as parameter of this method is still
+        possible, but beware that underlying registries all deal with the same
+        software stack, in this case.
+        """
 
         self.populate()
 
@@ -339,13 +352,14 @@ class MultiPatchingRegistry(object):
         )
 
     def get_all_fixers(self, *args, **kwargs):
+        """Return the concatenation of all fixers of underlying registries."""
         return self._flatten(
             [registry.get_all_fixers(*args, **kwargs) for registry in self._registries]
         )
 
     def get_fixer_by_id(self, fixer_id, *args, **kwargs):
         """
-        In case of duplicate fixers having the same ID, we just return the first one
+        In case of duplicate fixers having the same ID, just return the first one.
         """
         for registry in self._registries:
             try:

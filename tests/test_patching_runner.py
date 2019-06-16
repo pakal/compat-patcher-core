@@ -1,19 +1,10 @@
 import dummy_module
-from compat_patcher import generic_patch_software, PatchingRegistry
+from compat_patcher import generic_patch_software, PatchingRegistry, DEFAULT_CONFIG
 from compat_patcher.registry import MultiPatchingRegistry
 from compat_patcher.runner import PatchingRunner
 from compat_patcher.utilities import PatchingUtilities, WarningsProxy
 from dummy_fixers import patching_registry, patching_registry_bis
 
-CONFIG_PROVIDER_EXAMPLE = dict(
-    logging_level="DEBUG",
-    enable_warnings=True,
-    patch_injected_objects=True,
-    include_fixer_ids="*",
-    include_fixer_families=None,
-    exclude_fixer_ids=None,
-    exclude_fixer_families=None,
-)
 
 
 def test_runner_patch_software():
@@ -21,7 +12,7 @@ def test_runner_patch_software():
     PatchingRunner._clear_all_applied_fixers()  # Important
 
     del dummy_module.APPLIED_FIXERS[:]
-    config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
+    config_provider = DEFAULT_CONFIG.copy()
 
     patching_utilities = PatchingUtilities(config_provider=config_provider)
 
@@ -68,7 +59,7 @@ def test_generic_patch_software():
     PatchingRunner._clear_all_applied_fixers()  # Important
 
     del dummy_module.APPLIED_FIXERS[:]
-    config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
+    config_provider = DEFAULT_CONFIG.copy()
 
     patching_registry_internal = PatchingRegistry(
         family_prefix="internal", current_software_version=lambda: "100"
@@ -102,7 +93,7 @@ def test_fixer_idempotence_through_runner():
     PatchingRunner._clear_all_applied_fixers()  # Important
 
     del dummy_module.APPLIED_FIXERS[:]
-    config_provider = CONFIG_PROVIDER_EXAMPLE.copy()
+    config_provider = DEFAULT_CONFIG.copy()
 
     patching_utilities = PatchingUtilities(config_provider=config_provider)
 

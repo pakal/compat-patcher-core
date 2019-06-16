@@ -1,7 +1,8 @@
+
 from .exceptions import SkipFixerException
-from .registry import PatchingRegistry
+from .registry import PatchingRegistry, MultiPatchingRegistry
 from .runner import PatchingRunner
-from .utilities import PatchingUtilities, WarningsProxy
+from .utilities import PatchingUtilities, WarningsProxy, tuplify_software_version, detuplify_software_version
 
 
 def generic_patch_software(
@@ -31,3 +32,15 @@ def generic_patch_software(
         patching_registry=patching_registry,
     )
     django_patching_runner.patch_software()
+
+
+#: Example configuration to copy() and adapt
+DEFAULT_CONFIG = dict(
+    logging_level="INFO",
+    enable_warnings=True,
+    patch_injected_objects=True,
+    include_fixer_ids="*",
+    include_fixer_families=None,
+    exclude_fixer_ids=None,
+    exclude_fixer_families=None,
+)

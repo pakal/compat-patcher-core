@@ -8,13 +8,23 @@ from compat_patcher.exceptions import SkipFixerException
 
 
 class PatchingRunner(object):
+    """
+    This class is in charge of fetching relevant fixers from the registry,
+    and applying them in a proper order, while skipping those who have already been
+    applied (i.e same family name and ID) and those which raised SkipFixerException.
+    """
+
+    # Helpful for autodocumentation
+    config_keys_used = ["include_fixer_ids", "include_fixer_families",
+                        "exclude_fixer_ids", "exclude_fixer_families"]
 
     _all_applied_fixers = []  # Class attribute with qualified fixer names!
 
-    def __init__(self, config_provider, patching_utilities, patching_registry):
+    def __init__(self, config_provider, patching_registry, patching_utilities):
+        assert config_provider, config_provider
         self._config_provider = config_provider
-        self._patching_utilities = patching_utilities
         self._patching_registry = patching_registry
+        self._patching_utilities = patching_utilities
 
     @classmethod
     def _clear_all_applied_fixers(cls):  # For testing only!
@@ -22,19 +32,13 @@ class PatchingRunner(object):
 
     def _get_patcher_setting(self, name):
         """
-        Returns the value of a patcher setting, without necessarily validating it.
-
-        If the `settings` parameters is not None, it has precedence over default settings.
+        Returns the value of a patcher setting.
         """
-        return self._config_provider[name]
+        assert name in self.config_keys_used  # To track coherence
 
-    def get_patcher_setting(self, name):
-        """
-        Returns the value of a patcher setting, and potentially apply a rough validation.
-        """
-        value = self._get_patcher_setting(name)
+        value = self._config_provider[name]
 
-        # For now, patching utilities validate their own settings, so we just check filters
+        # For now, patching utilities validate their own config, so we just check filters
         if name.startswith("include") or name.startswith("exclude"):
             assert value in ("*", None) or (
                 isinstance(value, (list, tuple))
@@ -77,15 +81,15 @@ class PatchingRunner(object):
     def _get_sorted_relevant_fixers(self):
 
         # For now, we don't need to be able to force-send a `current_software_version`
-        fixer_settings = dict(
-            include_fixer_ids=self.get_patcher_setting("include_fixer_ids"),
-            include_fixer_families=self.get_patcher_setting("include_fixer_families"),
-            exclude_fixer_ids=self.get_patcher_setting("exclude_fixer_ids"),
-            exclude_fixer_families=self.get_patcher_setting("exclude_fixer_families"),
+        fixers_config = dict(
+            include_fixer_ids=self._get_patcher_setting("include_fixer_ids"),
+            include_fixer_families=self._get_patcher_setting("include_fixer_families"),
+            exclude_fixer_ids=self._get_patcher_setting("exclude_fixer_ids"),
+            exclude_fixer_families=self._get_patcher_setting("exclude_fixer_families"),
         )
         log = functools.partial(self._patching_utilities.emit_log, level="DEBUG")
         relevant_fixers = self._patching_registry.get_relevant_fixers(
-            log=log, **fixer_settings
+            log=log, **fixers_config
         )
 
         # REVERSED order is necessary for backwards compatibility, more advanced
@@ -97,9 +101,9 @@ class PatchingRunner(object):
         return relevant_fixers
 
     def patch_software(self):
-        """Patches the software with relevant fixers, applied in a proper order.
+        """Patch the software according to plans.
 
-        Returns the list of fixers that were successfully applied during this call.
+        Return the list of fixers that were successfully applied during this call.
         """
         relevant_fixers = self._get_sorted_relevant_fixers()
         just_applied_fixers = self._apply_selected_fixers(relevant_fixers)

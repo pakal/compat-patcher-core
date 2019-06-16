@@ -84,7 +84,6 @@ def test_import_proxifier():
     try:
         import noparent.newmodule
     except ImportError as e:
-        assert "No module named noparent.newmodule" in str(e), str(e)
+        assert "No module named" in str(e), str(e)
     else:
         raise RuntimeError("import error not raised for noparent.newmodule")
-

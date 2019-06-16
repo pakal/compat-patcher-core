@@ -9,6 +9,7 @@ Welcome to Compat Patcher Core's documentation!
 .. toctree::
    :maxdepth: 2
 
+   api.rst
 
 
 .. include:: ../README.rst
