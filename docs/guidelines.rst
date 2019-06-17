@@ -13,13 +13,15 @@ TODO CHECK THAT - This skeleton provides a standard structure for utilities and 
 
 Then, provide the `current_software_version` to the registry constructor, possibly as a callable.
 
+TODO PUT THESE INIT STEPS IN RECIPE INSTEAD!!!
+
 
 Writing new fixers
 --------------------
 
 - Follow PEP8 as much as you can, or use `Black <https://pypi.org/project/black/>`_ to solve the problem once and for all.
 
-- Fixers have to be registered with the `register_compatibility_fixer-)` method of a patching registry. Hint: you can be DRY by using :code:`functools.partial` to preconfigure a set of similar fixers.
+- Fixers have to be registered with the :meth:`compat_patcher.PatchingRegistry.register_compatibility_fixer()` method of a patching registry. Hint: you can be DRY by using :code:`functools.partial` to preconfigure a set of similar fixers.
 
 - Fixers must have a docstring explaining what they do (what breaking changes it deals with), and tests checking that both old and new behaviour keep working.
 

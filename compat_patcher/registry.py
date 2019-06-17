@@ -88,8 +88,12 @@ class PatchingRegistry(object):
         software version is >= `fixer_applied_from_version` and <
         `fixer_applied_upto_version` (let them be None to have no limit).
 
-        `fixer_reference_version` is used to sort fixers when applying them, and to
-        derive the name of the family of fixers concerned.
+        The "fixer_reference_version" parameters identifies the software version
+        where the breaking change was introduced (for backwards compatibility
+        fixers), or where the new feature was introduced (for forwards compatibility
+        fixers). It is not related to the appearance of corresponding
+        DeprecationWarnings in the software. It is also used to sort fixers when
+        applying them, and to generate the name of the family of fixers concerned.
 
         `feature_supported_from_version` (included) and
         `feature_supported_upto_version` (excluded) may be used to limit the range of
