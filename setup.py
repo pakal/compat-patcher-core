@@ -51,13 +51,13 @@ setup(
     package_dir = {'': "src"},
     packages=['compat_patcher'],
     install_requires=["six"],
-    extras_require={"build_sphinx": ["sphinx", "sphinx_rtd_theme"]},
+    extras_require={"build_sphinx": ["sphinx", "sphinx_rtd_theme"], 
+                    "run_pylint":["pylint", "pylint-quotes"]},
     setup_requires=setup_requires,
     tests_require=[
+        # Beware, keep in sync with tox.ini
         "pytest",
         "pytest-cov",
         "docutils",
-        "pylint",
-        "pylint-quotes",
     ],
 )
