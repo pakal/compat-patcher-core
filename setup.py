@@ -7,8 +7,11 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))  # security
 
 from setuptools import setup, find_packages
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def read_file(fname):
+    if not os.path.isabs(fname):
+        fname = os.path.join(ROOT_DIR, fname)
     return open(os.path.join(os.path.dirname(__file__), fname)).read().strip()
 
 
@@ -30,7 +33,6 @@ Operating System :: Unix
 Operating System :: MacOS :: MacOS X
 """
 
-packages = find_packages(exclude="tests")
 
 needs_pytest = {"pytest", "test", "ptr"}.intersection(sys.argv)
 setup_requires = ["pytest-runner"] if needs_pytest else []
@@ -46,14 +48,14 @@ setup(
     description="A patcher system to allow easy and lasting API compatibility.",
     classifiers=filter(None, classifiers.split("\n")),
     long_description=read_file("README.rst"),
-    packages=packages,
+    package_dir = {'': "src"},
+    packages=['compat_patcher'],
     install_requires=["six"],
     extras_require={"build_sphinx": ["sphinx", "sphinx_rtd_theme"]},
     setup_requires=setup_requires,
     tests_require=[
         "pytest",
         "pytest-cov",
-        "pytest-pythonpath",
         "docutils",
         "pylint",
         "pylint-quotes",
