@@ -20,41 +20,41 @@ def test_runner_patch_software():
 
     patching_utilities = PatchingUtilities(config_provider=config_provider)
 
-    django_patching_runner = PatchingRunner(
+    patching_runner = PatchingRunner(
         config_provider=config_provider,
         patching_utilities=patching_utilities,
         patching_registry=patching_registry,
     )
 
     _sorted_fixers_ids = [
-        f["fixer_id"] for f in django_patching_runner._get_sorted_relevant_fixers()
+        f["fixer_id"] for f in patching_runner._get_sorted_relevant_fixers()
     ]
     assert (
         "fix_something_but_skipped" in _sorted_fixers_ids
     )  # Will be aborted below during execution of fixers
 
-    fixers_applied = django_patching_runner.patch_software()
+    result = patching_runner.patch_software()
     # Fixers sorted by descending reference version and name
-    assert fixers_applied == [
+    assert result == dict(fixers_just_applied=[
         "fix_something_upto_v6",
         "fix_something_from_v5",
         "fix_something_always",
         "fix_something_from_v4",
-    ]
+    ])
 
-    assert dummy_module.APPLIED_FIXERS == fixers_applied  # Fixers are really run
+    assert dummy_module.APPLIED_FIXERS == result["fixers_just_applied"]  # Fixers are really run
 
-    fixers_applied = django_patching_runner.patch_software()
-    assert fixers_applied == []  # Already applied so skipped
+    result = patching_runner.patch_software()
+    assert result == dict(fixers_just_applied=[])  # Already applied so skipped
 
-    django_patching_runner2 = PatchingRunner(
+    patching_runner2 = PatchingRunner(
         config_provider=config_provider,
         patching_utilities=patching_utilities,
         patching_registry=patching_registry,
     )
-    fixers_applied = django_patching_runner2.patch_software()
+    result = patching_runner2.patch_software()
     assert (
-        fixers_applied == []
+        result == dict(fixers_just_applied=[])
     )  # Already applied so skipped, despite different runner instance
 
 
@@ -115,20 +115,20 @@ def test_fixer_idempotence_through_runner():
         "fix_something_always",  # This one is TWICE there, under different registries
     ]
 
-    django_patching_runner2 = PatchingRunner(
+    patching_runner2 = PatchingRunner(
         config_provider=config_provider,
         patching_utilities=patching_utilities,
         patching_registry=multi_registry,
     )
-    just_applied_fixers = django_patching_runner2.patch_software()
-    assert just_applied_fixers == [
+    result = patching_runner2.patch_software()
+    assert result == dict(fixers_just_applied=[
         "fix_something_always",
         "fix_something_other_taken",
         "fix_something_upto_v6",
         "fix_something_from_v5",
         "fix_something_always",  # Properly run even if duplicate fixer_id
         "fix_something_from_v4",
-    ]
+    ])
 
 
 def test_make_safe_patcher():

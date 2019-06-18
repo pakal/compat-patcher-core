@@ -52,7 +52,7 @@ class PatchingRunner(object):
         return value
 
     def _apply_selected_fixers(self, fixers):
-        just_applied_fixers = []
+        fixers_just_applied = []
         for fixer in fixers:
 
             fixer_qualified_name = fixer["fixer_qualified_name"]
@@ -67,7 +67,7 @@ class PatchingRunner(object):
                 try:
                     fixer["fixer_callable"](self._patching_utilities)
                     self._all_applied_fixers.append(fixer_qualified_name)
-                    just_applied_fixers.append(fixer["fixer_id"])
+                    fixers_just_applied.append(fixer["fixer_id"])
                 except SkipFixerException as e:
                     self._patching_utilities.emit_log(
                         "Compat fixer '{}-{}' was actually not applied, reason: {}".format(
@@ -80,7 +80,7 @@ class PatchingRunner(object):
                     "Compat fixer '{}' was already applied".format(fixer["fixer_id"]),
                     level="WARNING",
                 )
-        return just_applied_fixers
+        return fixers_just_applied
 
     def _get_sorted_relevant_fixers(self):
 
@@ -110,5 +110,5 @@ class PatchingRunner(object):
         Return the list of fixers that were successfully applied during this call.
         """
         relevant_fixers = self._get_sorted_relevant_fixers()
-        just_applied_fixers = self._apply_selected_fixers(relevant_fixers)
-        return just_applied_fixers
+        fixers_just_applied = self._apply_selected_fixers(relevant_fixers)
+        return dict(fixers_just_applied=fixers_just_applied)

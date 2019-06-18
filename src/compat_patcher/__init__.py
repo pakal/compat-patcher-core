@@ -33,12 +33,14 @@ def generic_patch_software(
     if warnings_proxy:  # Update the config of preexisting WarningsProxy
         warnings_proxy.set_patching_utilities(patching_utilities)
 
-    django_patching_runner = patching_runner_class(
+    patching_runner = patching_runner_class(
         config_provider=config_provider,
         patching_utilities=patching_utilities,
         patching_registry=patching_registry,
     )
-    django_patching_runner.patch_software()
+    patching_runner.patch_software()
+
+    return None  # No return value for now, if some is set one day it shall be a DICT!
 
 
 #: Example configuration to copy() and adapt
