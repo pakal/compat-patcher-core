@@ -1,19 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import os
-import warnings
-
 import pytest
 
 import compat_patcher
 from compat_patcher.registry import PatchingRegistry
+from compat_patcher.test_scaffolding import ensure_no_stdlib_warnings, \
+    ensure_all_fixers_have_a_test_under_pytest
 from compat_patcher.utilities import (
     PatchingUtilities,
-    ensure_no_stdlib_warnings,
     detuplify_software_version,
     tuplify_software_version,
     WarningsProxy,
-    ensure_all_fixers_have_a_test_under_pytest,
 )
 
 example_config_provider = {
@@ -120,6 +118,8 @@ def test_enable_warnings_setting():
 
     warnings_proxy = WarningsProxy()  # For now, goes direct lyto stdlib
 
+    import os, warnings  # This construct is not detected by ensure_no_stdlib_warnings()
+    del os
     warnings.simplefilter("always", Warning)
 
     with warnings.catch_warnings(record=True) as w:
@@ -182,17 +182,6 @@ def test_logging_level_setting(capsys):
     assert "<INFORMATION3>" in err
 
 
-def test_no_stdlib_warnings_in_package():
-    import warnings  # This line will trigger checker error
-
-    del warnings
-    pkg_root = os.path.dirname(compat_patcher.__file__)
-    analysed_files = ensure_no_stdlib_warnings(pkg_root)
-    assert len(analysed_files) > 5, analysed_files
-
-    pkg_root = os.path.dirname(__file__)
-    with pytest.raises(ValueError, match="wrong phrase.*test_patching_utilities.py"):
-        ensure_no_stdlib_warnings(pkg_root)
 
 
 def test_version_tuplify_detuplify():
@@ -203,29 +192,3 @@ def test_version_tuplify_detuplify():
     assert detuplify_software_version("5.0") == "5.0"
     assert detuplify_software_version(None) is None
 
-
-def test_ensure_all_fixers_have_a_test_under_pytest():
-    class DummyNode:
-        pass
-
-    patching_registry = PatchingRegistry("dummyname")
-
-    @patching_registry.register_compatibility_fixer(fixer_reference_version="10.1")
-    def my_dummy_fixer(utils):
-        "A help string"
-        pass
-
-    node = DummyNode()
-    node.name = "test_my_dummy_fixer"
-    items = [node]
-
-    # No problem, all registered fixers have their test here
-    ensure_all_fixers_have_a_test_under_pytest(
-        config=None, items=items, patching_registry=patching_registry, _fail_fast=True
-    )
-
-    # Error when attempting to clone first item to report the missing test
-    with pytest.raises(RuntimeError, match="No test written for .* fixer"):
-        ensure_all_fixers_have_a_test_under_pytest(
-            config=None, items=[], patching_registry=patching_registry, _fail_fast=True
-        )
