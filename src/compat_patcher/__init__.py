@@ -12,29 +12,29 @@ from .utilities import (
 
 
 def generic_patch_software(
-    config_provider,
+    settings,
     patching_registry,
     patching_utilities_class=PatchingUtilities,
     patching_runner_class=PatchingRunner,
     warnings_proxy=None,
 ):
     """Load all dependencies, and apply relevant fixers from the `patching_registry`,
-    according to the settings of the provided `config_provider`.
+    according to the settings of the provided `settings`.
 
     You can provide custom classes to be instantiated instead of default ones, and/or an
-    existing WarningsProxy which will be updated with the new config as soon as possible.
+    existing WarningsProxy which will be updated with the new settings as soon as possible.
     """
 
     patching_registry.populate()
     assert patching_registry._is_populated
 
-    patching_utilities = patching_utilities_class(config_provider=config_provider)
+    patching_utilities = patching_utilities_class(settings=settings)
 
     if warnings_proxy:  # Update the config of preexisting WarningsProxy
         warnings_proxy.set_patching_utilities(patching_utilities)
 
     patching_runner = patching_runner_class(
-        config_provider=config_provider,
+        settings=settings,
         patching_utilities=patching_utilities,
         patching_registry=patching_registry,
     )
@@ -44,7 +44,7 @@ def generic_patch_software(
 
 
 #: Example configuration to copy() and adapt
-DEFAULT_CONFIG = dict(
+DEFAULT_SETTINGS = dict(
     logging_level="INFO",
     enable_warnings=True,
     patch_injected_objects=True,

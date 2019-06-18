@@ -15,7 +15,7 @@ class PatchingRunner(object):
     """
 
     # Helpful for autodocumentation
-    config_keys_used = [
+    settings_keys_used = [
         "include_fixer_ids",
         "include_fixer_families",
         "exclude_fixer_ids",
@@ -24,9 +24,9 @@ class PatchingRunner(object):
 
     _all_applied_fixers = []  # Class attribute with qualified fixer names!
 
-    def __init__(self, config_provider, patching_registry, patching_utilities):
-        assert config_provider, config_provider
-        self._config_provider = config_provider
+    def __init__(self, settings, patching_registry, patching_utilities):
+        assert settings, settings
+        self._settings = settings
         self._patching_registry = patching_registry
         self._patching_utilities = patching_utilities
 
@@ -38,11 +38,11 @@ class PatchingRunner(object):
         """
         Returns the value of a patcher setting.
         """
-        assert name in self.config_keys_used  # To track coherence
+        assert name in self.settings_keys_used  # To track coherence
 
-        value = self._config_provider[name]
+        value = self._settings[name]
 
-        # For now, patching utilities validate their own config, so we just check filters
+        # For now, patching utilities validate their own settings, so we just check filters
         if name.startswith("include") or name.startswith("exclude"):
             assert value in ("*", None) or (
                 isinstance(value, (list, tuple))
@@ -85,7 +85,7 @@ class PatchingRunner(object):
     def _get_sorted_relevant_fixers(self):
 
         # For now, we don't need to be able to force-send a `current_software_version`
-        fixers_config = dict(
+        fixers_settings = dict(
             include_fixer_ids=self._get_patcher_setting("include_fixer_ids"),
             include_fixer_families=self._get_patcher_setting("include_fixer_families"),
             exclude_fixer_ids=self._get_patcher_setting("exclude_fixer_ids"),
@@ -93,7 +93,7 @@ class PatchingRunner(object):
         )
         log = functools.partial(self._patching_utilities.emit_log, level="DEBUG")
         relevant_fixers = self._patching_registry.get_relevant_fixers(
-            log=log, **fixers_config
+            log=log, **fixers_settings
         )
 
         # REVERSED order is necessary for backwards compatibility, more advanced
@@ -107,7 +107,8 @@ class PatchingRunner(object):
     def patch_software(self):
         """Patch the software according to plans.
 
-        Return the list of fixers that were successfully applied during this call.
+        Return a dict with, at least field "fixers_just_applied", the list of fixers that
+        were successfully applied during this call.
         """
         relevant_fixers = self._get_sorted_relevant_fixers()
         fixers_just_applied = self._apply_selected_fixers(relevant_fixers)

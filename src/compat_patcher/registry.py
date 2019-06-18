@@ -257,7 +257,7 @@ class PatchingRegistry(object):
 
                 if not included:
                     log(
-                        "Skipping fixer %s, having neither id nor family (%s) included by patcher config"
+                        "Skipping fixer %s, having neither id nor family (%s) included by patcher settings"
                         % (fixer_id, fixer["fixer_family"])
                     )
                     continue
@@ -269,7 +269,7 @@ class PatchingRegistry(object):
                         or fixer_qualified_name in exclude_fixer_ids
                     )
                 ):
-                    log("Skipping fixer %s, excluded by patcher config" % fixer_id)
+                    log("Skipping fixer %s, excluded by patcher settings" % fixer_id)
                     continue
 
                 if exclude_fixer_families == ALL or (
@@ -277,7 +277,7 @@ class PatchingRegistry(object):
                     and fixer["fixer_family"] in exclude_fixer_families
                 ):
                     log(
-                        "Skipping fixer %s, having family %s excluded by patcher config"
+                        "Skipping fixer %s, having family %s excluded by patcher settings"
                         % (fixer_id, fixer["fixer_family"])
                     )
                     continue

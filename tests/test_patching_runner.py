@@ -2,7 +2,7 @@ import dummy_module
 from compat_patcher import (
     generic_patch_software,
     PatchingRegistry,
-    DEFAULT_CONFIG,
+    DEFAULT_SETTINGS,
     make_safe_patcher,
 )
 from compat_patcher.registry import MultiPatchingRegistry
@@ -16,12 +16,12 @@ def test_runner_patch_software():
     PatchingRunner._clear_all_applied_fixers()  # Important
 
     del dummy_module.APPLIED_FIXERS[:]
-    config_provider = DEFAULT_CONFIG.copy()
+    settings = DEFAULT_SETTINGS.copy()
 
-    patching_utilities = PatchingUtilities(config_provider=config_provider)
+    patching_utilities = PatchingUtilities(settings=settings)
 
     patching_runner = PatchingRunner(
-        config_provider=config_provider,
+        settings=settings,
         patching_utilities=patching_utilities,
         patching_registry=patching_registry,
     )
@@ -48,7 +48,7 @@ def test_runner_patch_software():
     assert result == dict(fixers_just_applied=[])  # Already applied so skipped
 
     patching_runner2 = PatchingRunner(
-        config_provider=config_provider,
+        settings=settings,
         patching_utilities=patching_utilities,
         patching_registry=patching_registry,
     )
@@ -63,7 +63,7 @@ def test_generic_patch_software():
     PatchingRunner._clear_all_applied_fixers()  # Important
 
     del dummy_module.APPLIED_FIXERS[:]
-    config_provider = DEFAULT_CONFIG.copy()
+    settings = DEFAULT_SETTINGS.copy()
 
     patching_registry_internal = PatchingRegistry(
         family_prefix="internal", current_software_version=lambda: "100"
@@ -82,7 +82,7 @@ def test_generic_patch_software():
     assert not patching_registry_internal._is_populated
 
     generic_patch_software(
-        config_provider=config_provider,
+        settings=settings,
         patching_registry=patching_registry_internal,
         warnings_proxy=warnings_proxy,
     )
@@ -97,9 +97,9 @@ def test_fixer_idempotence_through_runner():
     PatchingRunner._clear_all_applied_fixers()  # Important
 
     del dummy_module.APPLIED_FIXERS[:]
-    config_provider = DEFAULT_CONFIG.copy()
+    settings = DEFAULT_SETTINGS.copy()
 
-    patching_utilities = PatchingUtilities(config_provider=config_provider)
+    patching_utilities = PatchingUtilities(settings=settings)
 
     multi_registry = MultiPatchingRegistry(
         registries=[patching_registry, patching_registry_bis]
@@ -116,7 +116,7 @@ def test_fixer_idempotence_through_runner():
     ]
 
     patching_runner2 = PatchingRunner(
-        config_provider=config_provider,
+        settings=settings,
         patching_utilities=patching_utilities,
         patching_registry=multi_registry,
     )

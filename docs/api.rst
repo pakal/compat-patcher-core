@@ -32,7 +32,7 @@ Patching utilities
 .. autoclass:: compat_patcher.PatchingUtilities
     :members:
 
-    .. autoattribute:: config_keys_used
+    .. autoattribute:: settings_keys_used
 
 .. autoclass:: compat_patcher.WarningsProxy
 
@@ -55,6 +55,6 @@ Patching exceptions
 Patching configuration
 =========================
 
-The `config_provider` expected by the classes above must be a dict-like object (just a __getitem__() method is enough), which raises KeyError if a setting is not found.
+The `settings` expected by classes above must be a dict-like object (just a __getitem__() method is enough), which raises KeyError if a setting is not found.
 
-.. autodata:: compat_patcher.DEFAULT_CONFIG
+.. autodata:: compat_patcher.DEFAULT_SETTINGS

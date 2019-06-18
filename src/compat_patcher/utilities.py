@@ -40,7 +40,7 @@ def detuplify_software_version(version):
 class WarningsProxy(object):
     """An instance of this class acts as a replacement for the stdlib "warnings"
     package, but it relies on a PatchingUtilities instance as soon as this one
-    is provided - thus making Warnings controllable by compat patcher config.
+    is provided - thus making Warnings controllable by compat patcher settings.
     """
 
     _patching_utilities = None
@@ -74,31 +74,31 @@ class PatchingUtilities(object):
     _enable_warnings = False
     _patch_injected_objects = None
 
-    config_keys_used = ["logging_level", "enable_warnings", "patch_injected_objects"]
+    settings_keys_used = ["logging_level", "enable_warnings", "patch_injected_objects"]
 
-    def __init__(self, config_provider):
-        # We force extraction of values, in case config_provider is a lazy instance
+    def __init__(self, settings):
+        # We force extraction of values, in case settings is a lazy instance
         # and not just a dict
-        assert config_provider, config_provider
-        config = {name: config_provider[name] for name in self.config_keys_used}
+        assert settings, settings
+        settings = {name: settings[name] for name in self.settings_keys_used}
 
-        self.apply_config(config)
+        self.apply_settings(settings)
 
-    def apply_config(self, config):
+    def apply_settings(self, settings):
         """This method can be called at runtime, mainly to alter the emission of logs
         and Warnings by fixers. it's possible to provide only a subset of settings, the
         others remaining as is.
         """
-        if "logging_level" in config:
-            assert config["logging_level"] is None or hasattr(
-                logging, config["logging_level"]
-            ), config["logging_level"]
-            self._logging_level = config["logging_level"]
-        if "enable_warnings" in config:
-            assert config["enable_warnings"] in (True, False), config["enable_warnings"]
-            self._enable_warnings = config["enable_warnings"]
-        if "patch_injected_objects" in config:
-            patch_injected_objects = config["patch_injected_objects"]
+        if "logging_level" in settings:
+            assert settings["logging_level"] is None or hasattr(
+                logging, settings["logging_level"]
+            ), settings["logging_level"]
+            self._logging_level = settings["logging_level"]
+        if "enable_warnings" in settings:
+            assert settings["enable_warnings"] in (True, False), settings["enable_warnings"]
+            self._enable_warnings = settings["enable_warnings"]
+        if "patch_injected_objects" in settings:
+            patch_injected_objects = settings["patch_injected_objects"]
             if patch_injected_objects is True:
                 patch_injected_objects = "__COMPAT_PATCHED__"  # Default marker name
             assert not patch_injected_objects or isinstance(
