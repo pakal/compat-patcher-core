@@ -249,7 +249,7 @@ class PatchingUtilities(object):
         :param real_name: The dotted name of the real module
         """
 
-        from compat_patcher import import_proxifier
+        from compat_patcher_core import import_proxifier
 
         import_proxifier.install_import_proxifier()  # idempotent activation
         import_proxifier.register_module_alias(

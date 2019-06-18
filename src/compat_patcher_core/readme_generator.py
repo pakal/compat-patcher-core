@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import reduce
 from io import open
 
-from compat_patcher.utilities import detuplify_software_version
+from compat_patcher_core.utilities import detuplify_software_version
 
 
 def make_table(grid):

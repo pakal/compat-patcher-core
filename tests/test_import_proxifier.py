@@ -1,6 +1,6 @@
 import sys
 
-from compat_patcher.import_proxifier import (
+from compat_patcher_core.import_proxifier import (
     install_import_proxifier,
     register_module_alias,
     _is_new_style_proxifier,

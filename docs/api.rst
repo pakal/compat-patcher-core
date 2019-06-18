@@ -10,51 +10,51 @@ selecting relevant fixers, and applying them.
 
 **These building blocks are exposed to ease the process fo creating this launcher.**
 
-.. autofunction:: compat_patcher.generic_patch_software
+.. autofunction:: compat_patcher_core.generic_patch_software
 
-.. autofunction:: compat_patcher.make_safe_patcher
+.. autofunction:: compat_patcher_core.make_safe_patcher
 
 
 Patching registry
 =========================
 
 
-.. autoclass:: compat_patcher.PatchingRegistry
+.. autoclass:: compat_patcher_core.PatchingRegistry
     :members:
 
-.. autoclass:: compat_patcher.MultiPatchingRegistry
+.. autoclass:: compat_patcher_core.MultiPatchingRegistry
     :members:
 
 
 Patching utilities
 =========================
 
-.. autoclass:: compat_patcher.PatchingUtilities
+.. autoclass:: compat_patcher_core.PatchingUtilities
     :members:
 
     .. autoattribute:: settings_keys_used
 
-.. autoclass:: compat_patcher.WarningsProxy
+.. autoclass:: compat_patcher_core.WarningsProxy
 
-.. autofunction:: compat_patcher.tuplify_software_version
+.. autofunction:: compat_patcher_core.tuplify_software_version
 
-.. autofunction:: compat_patcher.detuplify_software_version
+.. autofunction:: compat_patcher_core.detuplify_software_version
 
 
 Patching runner
 =========================
 
-.. autoclass:: compat_patcher.PatchingRunner
+.. autoclass:: compat_patcher_core.PatchingRunner
     :members:
 
 Patching exceptions
 =========================
 
-.. autoclass:: compat_patcher.SkipFixerException
+.. autoclass:: compat_patcher_core.SkipFixerException
 
 Patching configuration
 =========================
 
 The `settings` expected by classes above must be a dict-like object (just a __getitem__() method is enough), which raises KeyError if a setting is not found.
 
-.. autodata:: compat_patcher.DEFAULT_SETTINGS
+.. autodata:: compat_patcher_core.DEFAULT_SETTINGS

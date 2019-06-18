@@ -4,7 +4,7 @@ import functools
 
 import six
 
-from compat_patcher.exceptions import SkipFixerException
+from compat_patcher_core.exceptions import SkipFixerException
 
 
 class PatchingRunner(object):

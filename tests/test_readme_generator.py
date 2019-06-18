@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from docutils.core import publish_parts
 
-from compat_patcher.readme_generator import generate_readme
+from compat_patcher_core.readme_generator import generate_readme
 from dummy_fixers import patching_registry
 
 

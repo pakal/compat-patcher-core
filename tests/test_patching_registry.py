@@ -4,7 +4,7 @@ import functools
 
 import pytest
 
-from compat_patcher.registry import PatchingRegistry, MultiPatchingRegistry
+from compat_patcher_core.registry import PatchingRegistry, MultiPatchingRegistry
 from dummy_fixers import patching_registry, patching_registry_bis, patching_registry_ter
 
 

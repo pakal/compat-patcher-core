@@ -49,7 +49,7 @@ setup(
     classifiers=filter(None, classifiers.split("\n")),
     long_description=read_file("README.rst"),
     package_dir = {'': "src"},
-    packages=['compat_patcher'],
+    packages=['compat_patcher_core'],
     install_requires=["six"],
     extras_require={"build_sphinx": ["sphinx", "sphinx_rtd_theme"], 
                     "run_pylint":["pylint", "pylint-quotes"]},

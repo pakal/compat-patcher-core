@@ -3,11 +3,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os
 import pytest
 
-import compat_patcher
-from compat_patcher.registry import PatchingRegistry
-from compat_patcher.test_scaffolding import ensure_no_stdlib_warnings, \
+import compat_patcher_core
+from compat_patcher_core.registry import PatchingRegistry
+from compat_patcher_core.test_scaffolding import ensure_no_stdlib_warnings, \
     ensure_all_fixers_have_a_test_under_pytest
-from compat_patcher.utilities import (
+from compat_patcher_core.utilities import (
     PatchingUtilities,
     detuplify_software_version,
     tuplify_software_version,

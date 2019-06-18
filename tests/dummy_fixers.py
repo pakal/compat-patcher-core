@@ -2,14 +2,14 @@ import os
 
 import dummy_module
 
-import compat_patcher
-from compat_patcher.exceptions import SkipFixerException
-from compat_patcher.registry import PatchingRegistry
+import compat_patcher_core
+from compat_patcher_core.exceptions import SkipFixerException
+from compat_patcher_core.registry import PatchingRegistry
 
 
 # Important, when testing with Tox, we must ensure no shadowing occurs
-PACKAGE_DIR = os.path.dirname(os.path.abspath(compat_patcher.__file__))
-print('### TESTING DUMMY FIXERS WITH THE COMPAT_PATCHER FROM "%s" ###' %
+PACKAGE_DIR = os.path.dirname(os.path.abspath(compat_patcher_core.__file__))
+print('### TESTING DUMMY FIXERS WITH THE COMPAT_PATCHER_CORE FROM "%s" ###' %
       PACKAGE_DIR)
 
 

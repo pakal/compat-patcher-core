@@ -1,13 +1,13 @@
 import dummy_module
-from compat_patcher import (
+from compat_patcher_core import (
     generic_patch_software,
     PatchingRegistry,
     DEFAULT_SETTINGS,
     make_safe_patcher,
 )
-from compat_patcher.registry import MultiPatchingRegistry
-from compat_patcher.runner import PatchingRunner
-from compat_patcher.utilities import PatchingUtilities, WarningsProxy
+from compat_patcher_core.registry import MultiPatchingRegistry
+from compat_patcher_core.runner import PatchingRunner
+from compat_patcher_core.utilities import PatchingUtilities, WarningsProxy
 from dummy_fixers import patching_registry, patching_registry_bis
 
 

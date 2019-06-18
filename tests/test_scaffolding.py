@@ -1,9 +1,9 @@
 import os
 import pytest
 
-import compat_patcher
-from compat_patcher import PatchingRegistry
-from compat_patcher.test_scaffolding import ensure_no_stdlib_warnings, \
+import compat_patcher_core
+from compat_patcher_core import PatchingRegistry
+from compat_patcher_core.test_scaffolding import ensure_no_stdlib_warnings, \
     ensure_all_fixers_have_a_test_under_pytest
 
 
@@ -37,7 +37,7 @@ def test_ensure_no_stdlib_warnings_in_package():
     import warnings  # This line will trigger checker error
 
     del warnings
-    pkg_root = os.path.dirname(compat_patcher.__file__)
+    pkg_root = os.path.dirname(compat_patcher_core.__file__)
     analysed_files = ensure_no_stdlib_warnings(pkg_root)
     assert len(analysed_files) > 5, analysed_files
 
@@ -47,7 +47,7 @@ def test_ensure_no_stdlib_warnings_in_package():
 
 
 def test_no_package_shadowing_in_tox():
-    import compat_patcher
-    package_dir = os.path.dirname(os.path.abspath(compat_patcher.__file__))
+    import compat_patcher_core
+    package_dir = os.path.dirname(os.path.abspath(compat_patcher_core.__file__))
     if os.getenv("INSIDE_TOX") and ".tox" not in package_dir:
-        raise RuntimeError("Wrong compat_patcher package used in Tox")
+        raise RuntimeError("Wrong compat_patcher_core package used in Tox")

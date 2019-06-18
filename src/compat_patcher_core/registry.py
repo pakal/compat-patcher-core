@@ -5,7 +5,7 @@ import itertools
 
 import six
 
-from compat_patcher.utilities import (
+from compat_patcher_core.utilities import (
     tuplify_software_version,
     _import_attribute_from_dotted_string,
 )
