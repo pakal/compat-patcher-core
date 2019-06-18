@@ -1,12 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import os
 import pytest
 
-import compat_patcher_core
-from compat_patcher_core.registry import PatchingRegistry
-from compat_patcher_core.test_scaffolding import ensure_no_stdlib_warnings, \
-    ensure_all_fixers_have_a_test_under_pytest
 from compat_patcher_core.utilities import (
     PatchingUtilities,
     detuplify_software_version,
@@ -119,6 +114,7 @@ def test_enable_warnings_setting():
     warnings_proxy = WarningsProxy()  # For now, goes direct lyto stdlib
 
     import os, warnings  # This construct is not detected by ensure_no_stdlib_warnings()
+
     del os
     warnings.simplefilter("always", Warning)
 
@@ -182,8 +178,6 @@ def test_logging_level_setting(capsys):
     assert "<INFORMATION3>" in err
 
 
-
-
 def test_version_tuplify_detuplify():
     assert tuplify_software_version((5, 0)) == (5, 0)
     assert tuplify_software_version("5.0") == (5, 0)
@@ -191,4 +185,3 @@ def test_version_tuplify_detuplify():
     assert detuplify_software_version((5, 0)) == "5.0"
     assert detuplify_software_version("5.0") == "5.0"
     assert detuplify_software_version(None) is None
-

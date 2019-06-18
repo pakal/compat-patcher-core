@@ -9,6 +9,7 @@ from setuptools import setup, find_packages
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 def read_file(fname):
     if not os.path.isabs(fname):
         fname = os.path.join(ROOT_DIR, fname)
@@ -48,11 +49,13 @@ setup(
     description="A patcher system to allow easy and lasting API compatibility.",
     classifiers=filter(None, classifiers.split("\n")),
     long_description=read_file("README.rst"),
-    package_dir = {'': "src"},
-    packages=['compat_patcher_core'],
+    package_dir={"": "src"},
+    packages=["compat_patcher_core"],
     install_requires=["six"],
-    extras_require={"build_sphinx": ["sphinx", "sphinx_rtd_theme"], 
-                    "run_pylint":["pylint", "pylint-quotes"]},
+    extras_require={
+        "build_sphinx": ["sphinx", "sphinx_rtd_theme"],
+        "run_pylint": ["pylint", "pylint-quotes"],
+    },
     setup_requires=setup_requires,
     tests_require=[
         # Beware, keep in sync with tox.ini

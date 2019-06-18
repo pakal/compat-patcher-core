@@ -1,4 +1,3 @@
-
 def ensure_no_stdlib_warnings(
     source_root,
     # we authorize "warnings.warn", as long as it uses the custom WarningsProxy above

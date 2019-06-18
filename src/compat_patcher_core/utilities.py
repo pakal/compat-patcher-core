@@ -95,7 +95,9 @@ class PatchingUtilities(object):
             ), settings["logging_level"]
             self._logging_level = settings["logging_level"]
         if "enable_warnings" in settings:
-            assert settings["enable_warnings"] in (True, False), settings["enable_warnings"]
+            assert settings["enable_warnings"] in (True, False), settings[
+                "enable_warnings"
+            ]
             self._enable_warnings = settings["enable_warnings"]
         if "patch_injected_objects" in settings:
             patch_injected_objects = settings["patch_injected_objects"]

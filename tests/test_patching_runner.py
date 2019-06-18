@@ -35,14 +35,18 @@ def test_runner_patch_software():
 
     result = patching_runner.patch_software()
     # Fixers sorted by descending reference version and name
-    assert result == dict(fixers_just_applied=[
-        "fix_something_upto_v6",
-        "fix_something_from_v5",
-        "fix_something_always",
-        "fix_something_from_v4",
-    ])
+    assert result == dict(
+        fixers_just_applied=[
+            "fix_something_upto_v6",
+            "fix_something_from_v5",
+            "fix_something_always",
+            "fix_something_from_v4",
+        ]
+    )
 
-    assert dummy_module.APPLIED_FIXERS == result["fixers_just_applied"]  # Fixers are really run
+    assert (
+        dummy_module.APPLIED_FIXERS == result["fixers_just_applied"]
+    )  # Fixers are really run
 
     result = patching_runner.patch_software()
     assert result == dict(fixers_just_applied=[])  # Already applied so skipped
@@ -53,8 +57,8 @@ def test_runner_patch_software():
         patching_registry=patching_registry,
     )
     result = patching_runner2.patch_software()
-    assert (
-        result == dict(fixers_just_applied=[])
+    assert result == dict(
+        fixers_just_applied=[]
     )  # Already applied so skipped, despite different runner instance
 
 
@@ -121,14 +125,16 @@ def test_fixer_idempotence_through_runner():
         patching_registry=multi_registry,
     )
     result = patching_runner2.patch_software()
-    assert result == dict(fixers_just_applied=[
-        "fix_something_always",
-        "fix_something_other_taken",
-        "fix_something_upto_v6",
-        "fix_something_from_v5",
-        "fix_something_always",  # Properly run even if duplicate fixer_id
-        "fix_something_from_v4",
-    ])
+    assert result == dict(
+        fixers_just_applied=[
+            "fix_something_always",
+            "fix_something_other_taken",
+            "fix_something_upto_v6",
+            "fix_something_from_v5",
+            "fix_something_always",  # Properly run even if duplicate fixer_id
+            "fix_something_from_v4",
+        ]
+    )
 
 
 def test_make_safe_patcher():
