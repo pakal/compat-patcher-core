@@ -1,5 +1,5 @@
-Recommendations for implementing a compat-patcher
-#######################################################
+Guidelines
+#######################
 
 In the following documentation, the **software** represents the application/framework/library for which the compat-patcher
 companion application is implemented.
@@ -7,13 +7,15 @@ companion application is implemented.
 To make a new framework/library benefit from such a compat-patcher, we recommend starting from the
 provided project skeleton :
 
-TODO ADD COOKIE-CUTTER RECIPE
+COMING SOON
 
-TODO CHECK THAT - This skeleton provides a standard structure for utilities and sets of fixers, and activates several helpers: checking that every fixer has its test (when using pytest), checking that no stdlib "warnings.warn()" is used by compatibility shims, autogenerating a Readme with the list of available fixers...
+.. TODO ADD COOKIE-CUTTER RECIPE
 
-Then, provide the `current_software_version` to the registry constructor, possibly as a callable.
+This skeleton provides a standard structure for utilities and sets of fixers, and activates several helpers: checking that every fixer has its test (when using pytest), checking that no stdlib "warnings.warn()" is used by compatibility shims, autogenerating a Readme with the list of available fixers...
 
-TODO PUT THESE INIT STEPS IN RECIPE INSTEAD!!!
+.. Then, provide the `current_software_version` to the registry constructor, possibly as a callable.
+
+.. TODO PUT THESE INIT STEPS IN RECIPE INSTEAD!!!
 
 
 Writing new fixers
@@ -53,27 +55,13 @@ Writing new fixers
 
 
 
-
-Recommendations
-=================
-
-(avoid monkey-patching without going though them)
-
-Technically speaking:
-
-- in fixers :
-
-
-
-
-
 Testing fixers
 --------------------
 
-You can run "python setup.py test", which will install test requirements in a temporary folder, annd launch pytest.
+You can run :code:`python setup.py test`, which will install test requirements in a temporary folder, and launch pytest.
 
-You can also install all test requirements in your virtualenv (see the setup.py) and run `pytest -vl`.
+You can also install all test requirements in your virtualenv via :code:`pip -r requirements.txt` and run :code:`pytest -vl`.
 
-MOST IMPORTANTLY, to test cross-version compatibility of your changes, install and run the "tox" python tool from the root folder of the repository. Ensure that all combinations of Python and your to-be-patched framework are present in "tox.ini".
+MOST IMPORTANTLY, to test cross-version compatibility of your changes, install and run the "tox" python tool from the root folder of the repository; and ensure that all combinations of Python and your to-be-patched framework are present in "tox.ini".
 
 A Travis file is included for Continuous Integration of your Git repository.

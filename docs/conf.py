@@ -54,7 +54,7 @@ author = u"Pascal Chambon & others"
 # built documents.
 #
 # The short X.Y version.
-version = u"1.0"
+version = open("../VERSION").read()
 # The full version, including alpha/beta/rc tags.
 release = version
 

@@ -9,9 +9,9 @@ compat-patcher-core
     *Because Compatibility Matters*
 
 Welcome to Compat Patcher Core, a mini-framework to build "Compatibility Patchers", i.e companion applications which
-allow your favorite frameworks/libraries to keep long term API stability, while still progressing at a good pace.
+allow your favorite frameworks/libraries to keep long term API stability, while still getting new features at a good pace.
 
-More information on `Read The Docs <https://compat-patcher-core.readthedocs.io/en/latest/index.html>`_!
+Documentation available on `Read The Docs <https://compat-patcher-core.readthedocs.io/en/latest/index.html>`_!
 
 
 Which applications currently benefit from this system?
