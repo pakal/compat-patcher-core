@@ -4,6 +4,8 @@ include LICENSE
 include VERSION
 include README.rst
 include MANIFEST.in
+recursive-include src *.py
+recursive-include docs *.rst *.bat *.py Makefile
 recursive-include tests *.py
 include pytest.ini
 include tox.ini
