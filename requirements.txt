@@ -1,4 +1,5 @@
-# Beware, keep in sync with setup.py
+# Beware, keep in sync with setup.py dependencies
+
 pytest
 pytest-cov
 docutils

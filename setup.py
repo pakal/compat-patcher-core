@@ -9,7 +9,6 @@ from setuptools import setup, find_packages
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-
 def read_file(fname):
     if not os.path.isabs(fname):
         fname = os.path.join(ROOT_DIR, fname)
@@ -20,10 +19,11 @@ classifiers = """\
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
 Intended Audience :: Information Technology
-Intended Audience :: System Administrators
 License :: OSI Approved :: MIT License
-Programming Language :: Python
+Natural Language :: English
+Programming Language :: Python :: 2
 Programming Language :: Python :: 2.7
+Programming Language :: Python :: 3
 Programming Language :: Python :: 3.4
 Programming Language :: Python :: 3.5
 Programming Language :: Python :: 3.6
@@ -43,7 +43,7 @@ setup(
     version=read_file("VERSION"),
     author="Pascal Chambon & others",
     author_email="pythoniks@gmail.com",
-    ## TODO FIXME url='https://github.com/pakal/compat-patcher',
+    url="https://github.com/pakal/compat-patcher",
     license="MIT",
     platforms=["any"],
     description="A patcher system to allow easy and lasting API compatibility.",
@@ -58,7 +58,7 @@ setup(
     },
     setup_requires=setup_requires,
     tests_require=[
-        # Beware, keep in sync with tox.ini
+        # Beware, keep in sync with requirements.txt
         "pytest",
         "pytest-cov",
         "docutils",
