@@ -1,7 +1,7 @@
 def ensure_no_stdlib_warnings(
     source_root,
     # we authorize "warnings.warn", as long as it uses the custom WarningsProxy above
-    forbidden_phrases=("import " + "warnings", "from " + "warnings"),
+    forbidden_phrases=(r"^\s*import.* warnings", r"^\s*from warnings"),
 ):
     """
     This utility should be used by each compat patcher user, to ensure all shims only
@@ -9,7 +9,7 @@ def ensure_no_stdlib_warnings(
 
     Returns the list of checked python source files.
     """
-    import os
+    import os, re
 
     analysed_files = []
 
@@ -20,7 +20,7 @@ def ensure_no_stdlib_warnings(
             with open(full_path, "r") as s:
                 data = s.read()
             for forbidden_phrase in forbidden_phrases:
-                if forbidden_phrase in data:
+                if re.search(forbidden_phrase, data, re.MULTILINE):
                     if (f == "utilities.py") and (
                         "import " + "warnings as stdlib_warnings" in data
                     ):
@@ -41,7 +41,7 @@ def ensure_all_fixers_have_a_test_under_pytest(
 
         def pytest_collection_modifyitems(config, items):
             from yourownpackage.registry import your_patching_registry
-            from compat_patcher_core.test_scaffolding import ensure_all_fixers_have_a_test_under_pytest
+            from compat_patcher_core.scaffolding import ensure_all_fixers_have_a_test_under_pytest
             ensure_all_fixers_have_a_test_under_pytest(
                 config=config, items=items, patching_registry=your_patching_registry
             )

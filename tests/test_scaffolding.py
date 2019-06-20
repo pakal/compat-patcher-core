@@ -4,7 +4,7 @@ import pytest
 
 import compat_patcher_core
 from compat_patcher_core import PatchingRegistry
-from compat_patcher_core.test_scaffolding import (
+from compat_patcher_core.scaffolding import (
     ensure_no_stdlib_warnings,
     ensure_all_fixers_have_a_test_under_pytest,
 )
@@ -45,9 +45,9 @@ def test_ensure_no_stdlib_warnings_in_package():
     analysed_files = ensure_no_stdlib_warnings(pkg_root)
     assert len(analysed_files) > 5, analysed_files
 
-    pkg_root = os.path.dirname(__file__)
+    test_root = os.path.dirname(__file__)
     with pytest.raises(ValueError, match="wrong phrase.*test_scaffolding.py"):
-        ensure_no_stdlib_warnings(pkg_root)
+        ensure_no_stdlib_warnings(test_root)
 
 
 def test_no_package_shadowing_in_tox():

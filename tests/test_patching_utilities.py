@@ -108,30 +108,28 @@ def test_patch_injected_objects_setting():
 
 
 def test_enable_warnings_setting():
+    from compat_patcher_core.utilities import stdlib_warnings
 
     patching_utilities = PatchingUtilities(example_settings)
 
     warnings_proxy = WarningsProxy()  # For now, goes direct lyto stdlib
 
-    import os, warnings  # This construct is not detected by ensure_no_stdlib_warnings()
+    stdlib_warnings.simplefilter("always", Warning)
 
-    del os
-    warnings.simplefilter("always", Warning)
-
-    with warnings.catch_warnings(record=True) as w:
+    with stdlib_warnings.catch_warnings(record=True) as w:
         patching_utilities.emit_warning("this feature is obsolete!", DeprecationWarning)
     assert len(w) == 1
     warning = w[0]
     assert "this feature is obsolete!" in str(warning.message)
 
-    with warnings.catch_warnings(record=True) as w:
+    with stdlib_warnings.catch_warnings(record=True) as w:
         warnings_proxy.warn("this feature is obsolete too!", DeprecationWarning)
     assert len(w) == 1
     warning = w[0]
     assert "this feature is obsolete too!" in str(warning.message)
 
     warnings_proxy.set_patching_utilities(patching_utilities)
-    with warnings.catch_warnings(record=True) as w:
+    with stdlib_warnings.catch_warnings(record=True) as w:
         warnings_proxy.warn("this feature is obsolete again!", DeprecationWarning)
     assert len(w) == 1
     warning = w[0]
@@ -139,11 +137,11 @@ def test_enable_warnings_setting():
 
     patching_utilities.apply_settings(dict(enable_warnings=False))
 
-    with warnings.catch_warnings(record=True) as w:
+    with stdlib_warnings.catch_warnings(record=True) as w:
         patching_utilities.emit_warning("this feature is dead!", DeprecationWarning)
     assert len(w) == 0  # well disabled
 
-    with warnings.catch_warnings(record=True) as w:
+    with stdlib_warnings.catch_warnings(record=True) as w:
         warnings_proxy.warn("this feature is obsolete again!", DeprecationWarning)
     assert len(w) == 0  # well disabled
 
