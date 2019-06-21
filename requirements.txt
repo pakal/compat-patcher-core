@@ -9,3 +9,6 @@ sphinx_rtd_theme
 
 pylint
 pylint-quotes
+
+tox
+check-manifest
