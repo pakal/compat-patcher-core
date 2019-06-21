@@ -12,3 +12,6 @@ pylint-quotes
 
 tox
 check-manifest
+
+# Also install cookiecutter:
+pytest_cookies
