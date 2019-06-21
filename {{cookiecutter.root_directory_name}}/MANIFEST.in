@@ -1,0 +1,17 @@
+include AUTHORS.rst
+include CONTRIBUTING.rst
+include HISTORY.rst
+include LICENSE
+include VERSION
+include README.rst
+
+recursive-include src *.py
+recursive-include tests *.py *.html
+recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif
+
+include requirements_dev.txt
+include pytest.ini
+include tox.ini
+global-exclude *.orig *.py[co] *.log *.swp
+
+

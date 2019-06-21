@@ -1,0 +1,12 @@
+{
+  "root_directory_name": "project_dir",
+  "full_name": "John Doe",
+  "email": "john@doe.com",
+  "github_username": "johndoe",
+  "project_prefix": "someframework",
+  "project_name": "{{ cookiecutter.project_prefix }}-compat-patcher",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "project_short_description": "Description TODO HERE.",
+  "version": "0.1.0",
+  "add_pyup_badge": "n"
+}

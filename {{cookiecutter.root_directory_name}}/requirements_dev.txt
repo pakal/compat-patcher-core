@@ -1,0 +1,9 @@
+compat-patcher-core
+
+
+## FOR TESTING ##
+
+pytest
+pytest-cov
+tox
+check-manifest
