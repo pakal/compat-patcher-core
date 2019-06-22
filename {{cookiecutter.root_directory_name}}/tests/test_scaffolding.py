@@ -23,5 +23,5 @@ def test_no_package_shadowing_in_tox():
     import {{ cookiecutter.project_slug }}
 
     package_dir = os.path.dirname(os.path.abspath({{ cookiecutter.project_slug }}.__file__))
-    if os.getenv("INSIDE_TOX") and ".tox" not in package_dir:
+    if os.getenv("INSIDE_TOX_FOR_{{ cookiecutter.project_prefix.upper() }}") and ".tox" not in package_dir:
         raise RuntimeError("Wrong {{ cookiecutter.project_slug }} package used in Tox")

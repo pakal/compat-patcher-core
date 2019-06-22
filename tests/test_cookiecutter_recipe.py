@@ -7,6 +7,7 @@ import datetime
 
 from cookiecutter.utils import rmtree
 
+SOURCE_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 @contextmanager
 def inside_dir(dirpath):
@@ -23,13 +24,14 @@ def inside_dir(dirpath):
 
 
 @contextmanager
-def bake_in_temp_dir(cookies, *args, **kwargs):
+def bake_in_temp_dir(cookies, **kwargs):
     """
     Delete the temporal directory that is created when executing the tests
-    :param cookies: pytest_cookies.Cookies,
-        cookie to be baked and its temporal files will be removed
+
+    :param cookies: pytest_cookies.Cookies, cookie to be baked and its
+    temporal files will be removed
     """
-    result = cookies.bake(*args, **kwargs)
+    result = cookies.bake(template=SOURCE_ROOT_DIR, **kwargs)
     try:
         yield result
     finally:
@@ -39,6 +41,7 @@ def bake_in_temp_dir(cookies, *args, **kwargs):
 def run_inside_dir(command, dirpath):
     """
     Run a command from inside a given directory, returning the exit status
+
     :param command: Command that will be executed
     :param dirpath: String, path of the directory the command is being run.
     """

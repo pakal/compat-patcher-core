@@ -54,5 +54,5 @@ def test_no_package_shadowing_in_tox():
     import compat_patcher_core
 
     package_dir = os.path.dirname(os.path.abspath(compat_patcher_core.__file__))
-    if os.getenv("INSIDE_TOX") and ".tox" not in package_dir:
+    if os.getenv("INSIDE_TOX_FOR_CPC") and ".tox" not in package_dir:
         raise RuntimeError("Wrong compat_patcher_core package used in Tox")
