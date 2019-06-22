@@ -7,8 +7,8 @@ from compat_patcher_core import generic_patch_software, make_safe_patcher, DEFAU
 @make_safe_patcher
 def patch(settings=None):
 
-    # TODO replace this by settings extracted from the patched framework
-    settings = DEFAULT_SETTINGS
+    # TODO replace this by default settings extracted from the patched framework
+    settings = settings if settings is not None else DEFAULT_SETTINGS
 
     from .registry import patching_registry
     # Use the following import form to avoid triggering checker alerts on "warnings" import
