@@ -1,8 +1,9 @@
 API
-#################
+==================
+
 
 Patching launcher
-===================
+--------------------
 
 Each package implementing a compat-patcher for a specific framework/library should expose a `patch()` function
 at the top level, responsible for the whole process of retrieving configuration, instantiating miscellaneous utilities,
@@ -16,7 +17,7 @@ selecting relevant fixers, and applying them.
 
 
 Patching registry
-=========================
+-------------------
 
 
 .. autoclass:: compat_patcher_core.PatchingRegistry
@@ -27,7 +28,7 @@ Patching registry
 
 
 Patching utilities
-=========================
+--------------------
 
 .. autoclass:: compat_patcher_core.PatchingUtilities
     :members:
@@ -42,18 +43,20 @@ Patching utilities
 
 
 Patching runner
-=========================
+-------------------
 
 .. autoclass:: compat_patcher_core.PatchingRunner
     :members:
 
+
 Patching exceptions
-=========================
+---------------------
 
 .. autoclass:: compat_patcher_core.SkipFixerException
 
+
 Patching configuration
-=========================
+---------------------------
 
 The `settings` expected by classes above must be a dict-like object (just a __getitem__() method is enough), which raises KeyError if a setting is not found.
 

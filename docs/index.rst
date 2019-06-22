@@ -5,7 +5,7 @@
 
 
 Welcome to Compat Patcher Core's documentation!
-===============================================
+###################################################
 
 
 .. include:: ../README.rst
@@ -13,17 +13,18 @@ Welcome to Compat Patcher Core's documentation!
 
 
 Topics
-==================
+#################
 
 .. toctree::
    :maxdepth: 2
 
+   startup.rst
    guidelines.rst
    api.rst
 
 
 Indices and tables
-==================
+##################################
 
 * :ref:`genindex`
 * :ref:`modindex`
