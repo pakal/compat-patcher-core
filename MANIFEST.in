@@ -4,9 +4,11 @@ include LICENSE
 include VERSION
 include README.rst
 include MANIFEST.in
+include cookiecutter.json
 recursive-include src *.py
 recursive-include docs *.rst *.bat *.py Makefile
 recursive-include tests *.py
+recursive-include {{cookiecutter.root_directory_name}} *
 include pytest.ini
 include tox.ini
 include requirements.txt
