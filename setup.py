@@ -43,7 +43,7 @@ setup(
     version=read_file("VERSION"),
     author="Pascal Chambon & others",
     author_email="pythoniks@gmail.com",
-    url="https://github.com/pakal/compat-patcher",
+    url="https://github.com/pakal/compat-patcher-core",
     license="MIT",
     platforms=["any"],
     description="A patcher system to allow easy and lasting API compatibility.",
