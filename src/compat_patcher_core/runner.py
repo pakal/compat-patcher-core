@@ -59,7 +59,7 @@ class PatchingRunner(object):
 
             if fixer_qualified_name not in self._all_applied_fixers:
                 self._patching_utilities.emit_log(
-                    "Compat fixer '{}-{}' is getting applied".format(
+                    "Compat fixer {}->{} is getting applied".format(
                         fixer["fixer_family"], fixer["fixer_id"]
                     ),
                     level="INFO",
@@ -70,14 +70,14 @@ class PatchingRunner(object):
                     fixers_just_applied.append(fixer["fixer_id"])
                 except SkipFixerException as e:
                     self._patching_utilities.emit_log(
-                        "Compat fixer '{}-{}' was actually not applied, reason: {}".format(
+                        "Compat fixer {}->{} was actually not applied, reason: {}".format(
                             fixer["fixer_family"], fixer["fixer_id"], e
                         ),
                         level="WARNING",
                     )
             else:
                 self._patching_utilities.emit_log(
-                    "Compat fixer '{}' was already applied".format(fixer["fixer_id"]),
+                    "Compat fixer {}->{} was already applied".format(["fixer_family"], fixer["fixer_id"]),
                     level="WARNING",
                 )
         return fixers_just_applied
