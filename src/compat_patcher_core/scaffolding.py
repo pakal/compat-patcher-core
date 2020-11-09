@@ -72,11 +72,17 @@ def ensure_all_fixers_have_a_test_under_pytest(
                 "MISSING_" + expected_test_name,
                 missing_fixer_test,
             )
-            items.append(
-                Function(
-                    name="MISSING_" + expected_test_name,
-                    parent=mock_item.parent,
-                    config=config,
-                    session=mock_item.session,
-                )
+
+            parent = mock_item.parent
+            params = dict(
+                name="MISSING_" + expected_test_name,
+                #config=config,
+                #session=mock_item.session,
             )
+            # See https://docs.pytest.org/en/stable/deprecations.html#node-construction-changed-to-node-from-parent
+            if hasattr(Function, "from_parent"):
+                function = Function.from_parent(parent, **params)
+            else:
+                function = Function(parent=parent, **params)
+
+            items.append(function)

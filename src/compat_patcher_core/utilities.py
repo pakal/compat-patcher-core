@@ -167,7 +167,7 @@ class PatchingUtilities(object):
         setattr(target_object, target_attrname, attribute)
 
     def inject_callable(self, target_object, target_callable_name, patch_callable):
-        """Inject a callable into an object of any type (module, class, instance...).
+        """Inject a simple callable (not a class) into an object of any type (module, class, instance...).
 
         :param target_object: The object to patch
         :param target_callable_name: The name given to the new callable in the object to patch
@@ -226,14 +226,6 @@ class PatchingUtilities(object):
         """Inject a module in sys.modules, under the selected dotted name.
 
         When injecting a submodule, its parent module(s) must exist too.
-        
-        Note that no propagation of the module object as an attribute of the parent module will occur. 
-        So if you "import module.submodule", this will succeed, but 
-        hasattr(module, "submodule") will fail, so use "from module import submodule" 
-        or "from module.submodule import something" instead, or manually inject the 
-        submodule object into parent module.
-
-        For a behaviour closer to normal import system, see `inject_import_alias`.
 
         :param target_module_name: The dotted name of the new module in sys.modules
         :param module: The module object to inject
