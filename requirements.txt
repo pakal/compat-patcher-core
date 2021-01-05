@@ -1,18 +1,20 @@
 # Beware, keep in sync with setup.py dependencies
 
-pytest
-pytest-cov
-docutils
+six==1.15.0
 
-sphinx
-sphinx_rtd_theme
+pytest==6.2.1
+pytest-cov==2.10.1
+docutils==0.16
 
-pylint
-pylint-quotes
+sphinx==3.4.2
+sphinx_rtd_theme==0.5.1
 
-tox
-check-manifest
+pylint==2.6.0
+pylint-quotes==0.2.1
 
-cookiecutter
-pytest_cookies
+tox==3.20.1
+check-manifest==0.45
+
+cookiecutter==1.7.2
+pytest_cookies==0.5.1
 
