@@ -2,18 +2,18 @@
 
 six==1.15.0
 
-pytest==6.2.1
+pytest>=4.6.11,<7
 pytest-cov==2.10.1
 docutils==0.16
 
-sphinx==3.4.2
+sphinx>=1.8.5
 sphinx_rtd_theme==0.5.1
 
-pylint==2.6.0
-pylint-quotes==0.2.1
+pylint>=1.9.5<3
+pylint-quotes>=0.1.8
 
 tox==3.20.1
-check-manifest==0.45
+check-manifest>=0.40
 
 cookiecutter==1.7.2
 pytest_cookies==0.5.1
