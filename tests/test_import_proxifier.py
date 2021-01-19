@@ -1,4 +1,4 @@
-import sys
+import sys, six
 
 from compat_patcher_core.import_proxifier import (
     install_import_proxifier,
@@ -87,3 +87,11 @@ def test_import_proxifier():
         assert "No module named" in str(e), str(e)
     else:
         raise RuntimeError("import error not raised for noparent.newmodule")
+
+    # We test_compatibility_with_other_custom_importers():
+    # Old versions of lib crashed with AssertionError due to wrong module name "six.moves.urllib_parse" set by six._importer
+    register_module_alias("my_six_urllib_parse_alias", real_name="six.moves.urllib.parse")
+    import my_six_urllib_parse_alias
+    # Re-overridden by our own importer on python3 only
+    assert my_six_urllib_parse_alias.__name__ == "six.moves.urllib.parse" if six.PY3 else "six.moves.urllib_parse"
+    assert my_six_urllib_parse_alias.urlencode(dict(name="h\xc3llo")) == "name=h%C3%83llo" if six.PY3 else "name=h%C3llo"

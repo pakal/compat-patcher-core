@@ -1,4 +1,11 @@
 
+Version 1.2
+============
+
+* Fix import-proxifier to remove AssertionError on module `__name__` when interfering with other custom
+  importers (ex. when importing "six.moves.urllib.parse")
+
+
 Version 1.1
 ==================
 

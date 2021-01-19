@@ -121,13 +121,14 @@ else:
             # We do the real loading of aliased module here
             with enrich_import_error(self.alias_name):
                 module = importlib.import_module(self.real_name, package=None)
-            assert module.__name__ == self.real_name, module.__name__
+            # Normally we have module.__name__ == self.real_name here, but it's not reliable
+            # e.g. six "_importer" delivers six.moves.urllib.parse module with __name__ six.moves.urllib_parse
             self.target_spec_backup = module.__spec__
             return module
 
         def exec_module(self, module):
-            # __name__ is, on some python versions, overridden by init_module_attrs(_force_name=True)
-            assert module.__name__ in (self.alias_name, self.real_name), module.__name__
+            # __name__ is, on some python versions, overridden as self.alias_name by init_module_attrs(_force_name=True)
+            # (in addition to false names set by custom importers, as described above)
             module.__name__ = self.real_name
             assert module.__spec__.origin == "alias", module.__spec__  # well overridden
             assert module.__spec__.loader_state["aliased_spec"] is None
