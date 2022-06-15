@@ -7,6 +7,8 @@ import datetime
 
 from cookiecutter.utils import rmtree
 
+import compat_patcher_core
+
 SOURCE_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 @contextmanager
@@ -38,7 +40,7 @@ def bake_in_temp_dir(cookies, **kwargs):
         rmtree(str(result.project))
 
 
-def run_inside_dir(command, dirpath):
+def run_inside_dir(command, dirpath, **popen_kwargs):
     """
     Run a command from inside a given directory, returning the exit status
 
@@ -46,7 +48,7 @@ def run_inside_dir(command, dirpath):
     :param dirpath: String, path of the directory the command is being run.
     """
     with inside_dir(dirpath):
-        return subprocess.check_call(shlex.split(command))
+        return subprocess.check_call(shlex.split(command), **popen_kwargs)
 
 
 def check_output_inside_dir(command, dirpath):
@@ -90,5 +92,8 @@ def test_bake_with_apostrophe_and_run_tests(cookies):
 def test_using_pytest(cookies):
     with bake_in_temp_dir(cookies) as result:
         assert result.project.isdir()
-        # Test the new pytest target
-        run_inside_dir('pytest', str(result.project)) == 0
+        # Test the new pytest target - we must help pytest find current compat_patcher_core though
+        popen_kwargs = dict(
+            env=dict(os.environ,
+                     PYTHONPATH=os.path.dirname(os.path.dirname(compat_patcher_core.__file__))))
+        run_inside_dir('pytest', str(result.project), **popen_kwargs) == 0
