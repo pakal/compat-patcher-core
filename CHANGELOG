@@ -1,4 +1,12 @@
 
+Version 2.0
+============
+
+* Fix encoding and error reporting bugs
+* Extend test coverage to Python3.10
+* Drop support for Python2.7 and Python3.5
+
+
 Version 1.2
 ============
 
