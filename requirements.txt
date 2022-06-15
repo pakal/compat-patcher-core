@@ -1,20 +1,21 @@
 # Beware, keep in sync with setup.py dependencies
 
-six==1.15.0
+six==1.16.0
 
-pytest>=4.6.11,<7
-pytest-cov==2.10.1
-docutils==0.16
+pytest==7.1.2
+pytest-cov==3.0.0
 
-sphinx>=1.8.5
-sphinx_rtd_theme==0.5.1
+docutils==0.17.1
+sphinx==2.0.1
+sphinx_rtd_theme==1.0.0
 
-pylint>=1.9.5<3
-pylint-quotes>=0.1.8
+pylint==2.14.2
+pylint-quotes==0.2.1
 
-tox==3.20.1
-check-manifest>=0.40
+tox==3.25.0
+check-manifest==0.48
 
+# FIXME upgrade/repair this, it breaks for now if bigger version
 cookiecutter==1.7.2
-pytest_cookies==0.5.1
+pytest_cookies==0.6.1
 

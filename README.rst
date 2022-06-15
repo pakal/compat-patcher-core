@@ -10,7 +10,7 @@ allow your favorite software (a framework, a library...) to keep long term API s
 (plugins, bridges to other applications...), while still keeping the main codebase clean, and getting new features at
 a good pace.
 
-Compatibility Patchers inject backward/forward compatibility shims (like class/function/attribute aliases, restore
+Compatibility Patchers inject backward/forward compatibility shims (like class/function/attribute aliases), restore
 features which were dropped/externalized because "not used enough" or "outside the scope of the library", and tweak
 the signatures and behaviour of callables (eg. for arguments which disappeared, or which became mandatory). It can
 even setup lazy "import aliases", so that code can import a moved module both from its old and new location.
