@@ -17,8 +17,8 @@ def ensure_no_stdlib_warnings(
         for f in [x for x in files if x.endswith(".py")]:
             full_path = os.path.join(root, f)
             # print(">> ANALYSING PYTHON FILE", full_path)
-            with open(full_path, "r", encoding="utf8") as s:
-                data = s.read()
+            with open(full_path, "rb") as stream:
+                data = stream.read().decode("utf8", "ignore")
             for forbidden_phrase in forbidden_phrases:
                 if re.search(forbidden_phrase, data, re.MULTILINE):
                     if (f == "utilities.py") and (
