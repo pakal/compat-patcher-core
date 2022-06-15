@@ -227,12 +227,16 @@ class PatchingUtilities(object):
 
         When injecting a submodule, its parent module(s) must exist too.
 
+        It is good practice to, then, also inject this module object as an attribute
+        of its immediate parents (with inject_attribute()), since this is normally done 
+        during python imports.
+
         :param target_module_name: The dotted name of the new module in sys.modules
         :param module: The module object to inject
         """
         target_module_name = str(target_module_name)  # Python2 compatibility
         assert isinstance(module, types.ModuleType), module
-        assert sys.modules.get(target_module_name) is None
+        assert sys.modules.get(target_module_name) is None, target_module_name
 
         self._patch_injected_object(module)
 

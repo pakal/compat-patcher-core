@@ -110,6 +110,9 @@ class PatchingRunner(object):
         Return a dict with, at least field "fixers_just_applied", the list of fixers that
         were successfully applied during this call.
         """
+
         relevant_fixers = self._get_sorted_relevant_fixers()
+
         fixers_just_applied = self._apply_selected_fixers(relevant_fixers)
+
         return dict(fixers_just_applied=fixers_just_applied)
