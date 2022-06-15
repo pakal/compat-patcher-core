@@ -6,6 +6,7 @@ pytest==7.1.2
 pytest-cov==3.0.0
 
 docutils==0.17.1
+
 sphinx==2.0.1
 sphinx_rtd_theme==1.0.0
 
@@ -13,9 +14,11 @@ pylint==2.14.2
 pylint-quotes==0.2.1
 
 tox==3.25.0
+
 check-manifest==0.48
 
 # FIXME upgrade/repair this, it breaks for now if bigger version
+# https://github.com/hackebrot/pytest-cookies/issues/62
 cookiecutter==1.7.2
 pytest_cookies==0.6.1
 

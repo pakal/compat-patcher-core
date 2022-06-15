@@ -32,7 +32,7 @@ breaking changes which target the same part of the code (e.g. a content handler 
 
 Compat Patcher Core holds the core logice of that system, via easily extendable classes: a registry system,
 monkey-patching utilities, and a generic runner to be called at the very start of your application. It also contains
-a cookiecutter recipe to setup your own Compatibility Patcher in a few minutes, with test scaffolding and packaging
+a **cookiecutter recipe** to setup your own Compatibility Patcher in a few minutes, with test scaffolding and packaging
 metadata ready for launch.
 
 Documentation is available on `Read The Docs <https://compat-patcher-core.readthedocs.io/en/latest/index.html>`_
