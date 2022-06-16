@@ -5,7 +5,7 @@ import sys
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # security
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -14,7 +14,9 @@ def read_file(fname):
         fname = os.path.join(ROOT_DIR, fname)
     return open(os.path.join(os.path.dirname(__file__), fname)).read().strip()
 
+VERSION = read_file("VERSION").strip()
 
+assert VERSION == "2.1", VERSION  # ELSE CHECK THESE PYTHON VERSION CLASSIFIERS BELOW FOR UPDATES
 classifiers = """\
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
@@ -38,7 +40,7 @@ setup_requires = ["pytest-runner"] if needs_pytest else []
 
 setup(
     name="compat-patcher-core",
-    version=read_file("VERSION"),
+    version=VERSION,
     author="Pascal Chambon & others",
     author_email="pythoniks@gmail.com",
     url="https://github.com/pakal/compat-patcher-core",
