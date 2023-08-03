@@ -32,6 +32,10 @@ classifiers = [
 dependencies = [
 ]
 
+[project.urls]
+Repository = "https://github.com/pakal/compat-patcher-core"
+Documentation = "https://compat-patcher-core.readthedocs.io/"
+
 [tool.setuptools]
 #packages = ["compat_patcher_core"]
 include-package-data = false

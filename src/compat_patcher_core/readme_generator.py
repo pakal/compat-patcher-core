@@ -88,7 +88,7 @@ def generate_readme(input_filename, output_filename, patching_registry):
 
     result = readme_manual_content + "\n\n"
     result += "Table of fixers\n===============\n\n"
-    result += "There are currently {} available fixers.\n\n".format(
+    result += "There are currently {} fixers available.\n\n".format(
         len(patching_registry.get_all_fixers())
     )
     result += _make_rst_table(patching_registry)
