@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.com/pakal/compat-patcher-core.svg?branch=master
-    :target: https://travis-ci.com/pakal/compat-patcher-core
+.. image:: https://ci.appveyor.com/api/projects/status/kyxas49ktvrfqu52/branch/master
+    :target: https://ci.appveyor.com/project/pakal/compat-patcher-core
 
 
 *Long term API compatibility for fast-moving projects*
