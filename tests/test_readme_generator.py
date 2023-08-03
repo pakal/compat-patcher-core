@@ -22,5 +22,5 @@ def test_generate_readme(tmp_path):
     html_body = publish_parts(source=content, writer_name="html4css1")["html_body"]
 
     assert "THIS IS A README" in html_body
-    assert "available fixers" in html_body
+    assert "fixers available" in html_body
     assert "<table" in html_body
