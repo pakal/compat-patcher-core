@@ -1,4 +1,11 @@
 
+Version 2.2
+============
+
+* Update testing to include Python 3.11
+* Update ReadTheDoc configuration
+
+
 Version 2.1
 ============
 
