@@ -30,7 +30,7 @@ target code on demand. By applying these fixers in a proper order (sometimes bef
 initialization of the patched software itself), Compatibility Patchers can easily "time travel", and work around multiple
 breaking changes which target the same part of the code (e.g. a content handler being added and then removed).
 
-Compat Patcher Core holds the core logice of that system, via easily extendable classes: a registry system,
+Compat Patcher Core holds the core logic of that system, via easily extendable classes: a registry system,
 monkey-patching utilities, and a generic runner to be called at the very start of your application. It also contains
 a **cookiecutter recipe** to setup your own Compatibility Patcher in a few minutes, with test scaffolding and packaging
 metadata ready for launch.
