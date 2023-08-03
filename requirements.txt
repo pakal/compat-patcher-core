@@ -1,5 +1,7 @@
 # Beware, keep in sync with setup.py dependencies
 
+setuptools
+
 six==1.16.0
 
 pytest==7.1.2

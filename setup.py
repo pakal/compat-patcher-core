@@ -16,18 +16,19 @@ def read_file(fname):
 
 VERSION = read_file("VERSION").strip()
 
-assert VERSION == "2.1", VERSION  # ELSE CHECK THESE PYTHON VERSION CLASSIFIERS BELOW FOR UPDATES
+assert VERSION == "2.2", VERSION  # ELSE CHECK THESE PYTHON VERSION CLASSIFIERS BELOW FOR UPDATES
+
 classifiers = """\
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
 Intended Audience :: Information Technology
 License :: OSI Approved :: MIT License
 Natural Language :: English
-Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
 Programming Language :: Python :: 3.10
+Programming Language :: Python :: 3.11
 Topic :: Software Development :: Libraries :: Python Modules
 Operating System :: Microsoft :: Windows
 Operating System :: Unix
