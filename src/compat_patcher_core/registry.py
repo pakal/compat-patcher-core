@@ -3,8 +3,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import collections
 import itertools
 
-import six
-
 from compat_patcher_core.utilities import (
     tuplify_software_version,
     _import_attribute_from_dotted_string,
@@ -30,7 +28,7 @@ class PatchingRegistry(object):
         self, family_prefix, populate_callable=None, current_software_version=None
     ):
         assert family_prefix and isinstance(
-            family_prefix, six.string_types
+            family_prefix, str
         ), family_prefix
         assert populate_callable is None or hasattr(
             populate_callable, "__call__"
@@ -47,10 +45,10 @@ class PatchingRegistry(object):
         version of the software to be patched.
         """
         current_software_version = self._current_software_version
-        if six.callable(current_software_version):
+        if callable(current_software_version):
             current_software_version = current_software_version()
         assert current_software_version is None or isinstance(
-            current_software_version, (six.string_types, tuple, list)
+            current_software_version, (str, tuple, list)
         ), current_software_version
         return current_software_version
 
@@ -109,7 +107,7 @@ class PatchingRegistry(object):
         """
 
         assert (
-            isinstance(fixer_reference_version, six.string_types)
+            isinstance(fixer_reference_version, str)
             and fixer_reference_version
         ), fixer_reference_version  # eg. "1.9"
         assert fixer_tags is None or isinstance(fixer_tags, list), fixer_tags
@@ -325,12 +323,12 @@ class MultiPatchingRegistry(object):
 
             original_registry_reference = registry_reference
 
-            if isinstance(registry_reference, six.string_types):
+            if isinstance(registry_reference, str):
                 registry_reference = _import_attribute_from_dotted_string(
                     registry_reference
                 )
 
-            if six.callable(registry_reference):
+            if callable(registry_reference):
                 registry_reference = registry_reference()
 
             if not isinstance(registry_reference, PatchingRegistry):
@@ -379,6 +377,4 @@ class MultiPatchingRegistry(object):
                 pass
         raise KeyError("Fixer %r not found in any patching registries" % fixer_id)
 
-    get_relevant_fixer_ids = six.get_unbound_function(
-        PatchingRegistry.get_relevant_fixer_ids
-    )  # Unmodified
+    get_relevant_fixer_ids = PatchingRegistry.get_relevant_fixer_ids # Unmodified
