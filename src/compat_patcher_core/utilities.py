@@ -7,8 +7,6 @@ import sys
 import types
 import warnings as stdlib_warnings  # Do NOT import/use elsewhere than here!
 
-import six
-
 
 def tuplify_software_version(version):
     """
@@ -17,10 +15,10 @@ def tuplify_software_version(version):
     """
     if version is None:
         return version
-    if isinstance(version, six.string_types):
+    if isinstance(version, str):
         version = tuple(int(x) for x in version.split("."))
     assert len(version) <= 5, version
-    assert all(isinstance(x, six.integer_types) for x in version), version
+    assert all(isinstance(x, int) for x in version), version
     return version
 
 
@@ -33,7 +31,7 @@ def detuplify_software_version(version):
         return version
     if isinstance(version, (tuple, list)):
         version = ".".join(str(number) for number in version)
-    assert isinstance(version, six.string_types)
+    assert isinstance(version, str)
     return version
 
 
@@ -104,7 +102,7 @@ class PatchingUtilities(object):
             if patch_injected_objects is True:
                 patch_injected_objects = "__COMPAT_PATCHED__"  # Default marker name
             assert not patch_injected_objects or isinstance(
-                patch_injected_objects, six.string_types
+                patch_injected_objects, str
             ), repr(patch_injected_objects)
             self._patch_injected_objects = patch_injected_objects
 
@@ -161,7 +159,7 @@ class PatchingUtilities(object):
         """
         assert attribute is not None
         assert not self._is_simple_callable(attribute), attribute
-        assert not isinstance(attribute, six.class_types), attribute
+        assert not isinstance(attribute, type), attribute
 
         self._patch_injected_object(attribute)
         setattr(target_object, target_attrname, attribute)
@@ -217,7 +215,7 @@ class PatchingUtilities(object):
         :param target_klassname: The name given to the new class in the object to patch
         :param klass: The class to inject
         """
-        assert isinstance(klass, six.class_types), klass
+        assert isinstance(klass, type), klass
 
         self._patch_injected_object(klass)
         setattr(target_object, target_klassname, klass)

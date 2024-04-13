@@ -2,8 +2,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import functools
 
-import six
-
 from compat_patcher_core.exceptions import SkipFixerException
 
 
@@ -46,7 +44,7 @@ class PatchingRunner(object):
         if name.startswith("include") or name.startswith("exclude"):
             assert value in ("*", None) or (
                 isinstance(value, (list, tuple))
-                and all(isinstance(f, six.string_types) for f in value)
+                and all(isinstance(f, str) for f in value)
             ), value
 
         return value
