@@ -5,13 +5,7 @@ setuptools
 pytest>=7.1.2
 pytest-cov>=3.0.0
 
-docutils>=0.17.1
-
-sphinx>=2.0.1
-sphinx_rtd_theme>=1.0.0
-
 pylint>=2.14.2
-pylint-quotes>=0.2.1
 
 tox>=3.25.0
 
