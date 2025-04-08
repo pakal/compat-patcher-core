@@ -15,8 +15,6 @@ pylint-quotes>=0.2.1
 
 tox>=3.25.0
 
-check-manifest>=0.48
-
 cookiecutter>=1.7.2
 pytest_cookies>=0.6.1
 
