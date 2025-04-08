@@ -2,15 +2,8 @@
 
 setuptools
 
-<<<<<<< HEAD
-pytest==7.1.2
-pytest-cov==3.0.0
-=======
-six>=1.16.0
-
 pytest>=7.1.2
 pytest-cov>=3.0.0
->>>>>>> a27a0c5 (Relax dependency requirements for testing)
 
 docutils>=0.17.1
 
