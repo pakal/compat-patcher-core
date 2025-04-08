@@ -69,7 +69,7 @@ def test_bake_with_defaults(cookies):
         assert 'tests' in found_toplevel_files
 
 
-TEST_LAUNCH_CMD = '%s setup.py test' % sys.executable.replace("\\", "/")
+TEST_LAUNCH_CMD = '%s -m pytest' % sys.executable.replace("\\", "/")
 
 
 def test_bake_and_run_tests(cookies):
