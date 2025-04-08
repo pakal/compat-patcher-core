@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compat-patcher-core"
-version = "2.2"
+version = "2.3"
 authors = [
     {name = "Pascal Chambon", email = "pythoniks@gmail.com"},
 ]
@@ -23,6 +23,8 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: System :: Filesystems",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Operating System :: Microsoft :: Windows",
@@ -37,7 +39,6 @@ Repository = "https://github.com/pakal/compat-patcher-core"
 Documentation = "https://compat-patcher-core.readthedocs.io/"
 
 [tool.setuptools]
-#packages = ["compat_patcher_core"]
 include-package-data = false
 package-dir = {"" = "src"}
 

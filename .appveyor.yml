@@ -12,7 +12,11 @@ environment:
     PYTHON: "3.10"
   - TOXENV: py311
     PYTHON: "3.11"
-  #FIXME add python 3.12 when available
+  - TOXENV: py312
+    PYTHON: "3.12"
+  - TOXENV: py313
+    PYTHON: "3.13"
+  #FIXME add python 3.14 when available
 
 stack: python %PYTHON%
 
