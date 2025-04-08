@@ -69,34 +69,31 @@ def test_bake_with_defaults(cookies):
         assert 'tests' in found_toplevel_files
 
 
+# We must help pytest find current compat_patcher_core package
+POPEN_KWARGS = dict(
+    env=dict(os.environ,
+             PYTHONPATH=os.path.dirname(os.path.dirname(compat_patcher_core.__file__))))
+
 TEST_LAUNCH_CMD = '%s -m pytest' % sys.executable.replace("\\", "/")
 
 
 def test_bake_and_run_tests(cookies):
     with bake_in_temp_dir(cookies) as result:
         assert result.project.isdir()
-        run_inside_dir(TEST_LAUNCH_CMD, str(result.project)) == 0
+        # Test the new pytest target -
+        run_inside_dir(TEST_LAUNCH_CMD, str(result.project), **POPEN_KWARGS) == 0
 
 
 def test_bake_withspecialchars_and_run_tests(cookies):
     """Ensure that a `full_name` with double quotes does not break setup.py"""
     with bake_in_temp_dir(cookies, extra_context={'full_name': 'name "quote" name'}) as result:
         assert result.project.isdir()
-        run_inside_dir(TEST_LAUNCH_CMD, str(result.project)) == 0
+        run_inside_dir(TEST_LAUNCH_CMD, str(result.project), **POPEN_KWARGS) == 0
 
 
 def test_bake_with_apostrophe_and_run_tests(cookies):
     """Ensure that a `full_name` with apostrophes does not break setup.py"""
     with bake_in_temp_dir(cookies, extra_context={'full_name': "O'connor"}) as result:
         assert result.project.isdir()
-        run_inside_dir(TEST_LAUNCH_CMD, str(result.project)) == 0
+        run_inside_dir(TEST_LAUNCH_CMD, str(result.project), **POPEN_KWARGS) == 0
 
-
-def test_using_pytest(cookies):
-    with bake_in_temp_dir(cookies) as result:
-        assert result.project.isdir()
-        # Test the new pytest target - we must help pytest find current compat_patcher_core though
-        popen_kwargs = dict(
-            env=dict(os.environ,
-                     PYTHONPATH=os.path.dirname(os.path.dirname(compat_patcher_core.__file__))))
-        run_inside_dir('pytest', str(result.project), **popen_kwargs) == 0
