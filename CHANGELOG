@@ -1,4 +1,13 @@
 
+Version 2.3
+============
+
+* Remove "six" module usage (thanks @MeggyCal)
+* Update cookiecutter recipe to stop using deprecated "python setup.py test"
+* Update testing to include Python 3.12 and 3.13
+* Fix sphinx and pylint configs
+
+
 Version 2.2
 ============
 
