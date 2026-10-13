@@ -1,4 +1,12 @@
 
+Version 2.4
+============
+
+* Add "must_exist" parameter to inject_attribute(), inject_callable(), inject_callable_alias()
+  and inject_class() utilities, to detect wrong attribute names or mismatches with patched software versions
+* inject_module() and inject_import_alias() now raise RuntimeError if the target module/alias already exists
+
+
 Version 2.3
 ============
 

@@ -81,6 +81,68 @@ def test_patch_injected_object():
     assert newcsv.__name__ == "csv"
 
 
+def test_must_exist_parameter():
+
+    patching_utilities = PatchingUtilities(example_settings)
+
+    class Target(object):
+        pass
+
+    class MyClass(object):
+        pass
+
+    def my_callable():
+        return 42
+
+    source_object = Target()
+    source_object.source_callable = my_callable
+
+    injectors = [
+        (patching_utilities.inject_attribute, dict(attribute=MyClass())),
+        (patching_utilities.inject_callable, dict(patch_callable=my_callable)),
+        (patching_utilities.inject_class, dict(klass=MyClass)),
+        (
+            patching_utilities.inject_callable_alias,
+            dict(source_object=source_object, source_attrname="source_callable"),
+        ),
+    ]
+
+    for injector, extra_kwargs in injectors:
+
+        target = Target()
+
+        with pytest.raises(RuntimeError, match="must_exist=True"):
+            injector(target, "my_name", must_exist=True, **extra_kwargs)
+        assert not hasattr(target, "my_name")  # Untouched
+
+        injector(target, "my_name", must_exist=False, **extra_kwargs)
+        assert hasattr(target, "my_name")
+
+        target.my_name = "ORIGINAL"
+        with pytest.raises(RuntimeError, match="must_exist=False"):
+            injector(target, "my_name", must_exist=False, **extra_kwargs)
+        assert target.my_name == "ORIGINAL"  # Untouched
+
+        injector(target, "my_name", must_exist=True, **extra_kwargs)
+        assert target.my_name != "ORIGINAL"
+
+        injector(target, "my_name", **extra_kwargs)  # must_exist=None
+        injector(target, "my_other_name", must_exist=None, **extra_kwargs)
+        assert hasattr(target, "my_other_name")
+
+    import dummy_module
+
+    with pytest.raises(RuntimeError, match="already exists in sys.modules"):
+        patching_utilities.inject_module("csv", dummy_module)
+
+    with pytest.raises(RuntimeError, match="already exists"):
+        patching_utilities.inject_import_alias("json", real_name="csv")
+
+    patching_utilities.inject_import_alias("newjson", real_name="json")
+    with pytest.raises(RuntimeError, match="already exists"):
+        patching_utilities.inject_import_alias("newjson", real_name="json")
+
+
 def test_patch_injected_objects_setting():
 
     patching_utilities = PatchingUtilities(example_settings)

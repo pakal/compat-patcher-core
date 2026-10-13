@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import functools
 import importlib
+import importlib.util
 import logging
 import sys
 import types
@@ -128,6 +129,38 @@ class PatchingUtilities(object):
                 return False  # properties, bound methods and such can't be modified
         return None
 
+    @staticmethod
+    def _check_injection_point(target_object, target_attrname, must_exist):
+        """Ensure that the presence of an object at the injection point matches
+        `must_exist` (True: must be present, False: must be absent, None: no check).
+
+        Raises RuntimeError on mismatch.
+        """
+        assert must_exist in (None, True, False), must_exist
+        if must_exist is None:
+            return
+        already_exists = hasattr(target_object, target_attrname)
+        if must_exist and not already_exists:
+            raise RuntimeError(
+                "No object %r found on %r, while must_exist=True"
+                % (target_attrname, target_object)
+            )
+        if not must_exist and already_exists:
+            raise RuntimeError(
+                "Object %r already exists on %r, while must_exist=False"
+                % (target_attrname, target_object)
+            )
+
+    @staticmethod
+    def _module_exists(module_name):
+        """Return True if the module is already loaded, or importable."""
+        if sys.modules.get(module_name) is not None:
+            return True
+        try:
+            return importlib.util.find_spec(module_name) is not None
+        except (ImportError, ValueError):
+            return False  # E.g. parent package doesn't exist
+
     def emit_log(self, message, level="INFO"):
         """A logger printing to stderr, since at some stages of patching, logging is
         not yet setup.
@@ -150,34 +183,49 @@ class PatchingUtilities(object):
         if self._enable_warnings:
             stdlib_warnings.warn(message, category, stacklevel + 1)
 
-    def inject_attribute(self, target_object, target_attrname, attribute):
+    def inject_attribute(
+        self, target_object, target_attrname, attribute, must_exist=None
+    ):
         """Inject an attribute into an object of any type (module, class, instance...).
 
         :param target_object: The object to patch
         :param target_attrname: The name given to the new attribute in the object to patch
         :param attribute: The attribute to inject, which must not be a callable
+        :param must_exist: If True (resp. False), raise RuntimeError if no object
+            exists (resp. an object already exists) at the injection point
         """
         assert attribute is not None
         assert not self._is_simple_callable(attribute), attribute
         assert not isinstance(attribute, type), attribute
+        self._check_injection_point(target_object, target_attrname, must_exist)
 
         self._patch_injected_object(attribute)
         setattr(target_object, target_attrname, attribute)
 
-    def inject_callable(self, target_object, target_callable_name, patch_callable):
+    def inject_callable(
+        self, target_object, target_callable_name, patch_callable, must_exist=None
+    ):
         """Inject a simple callable (not a class) into an object of any type (module, class, instance...).
 
         :param target_object: The object to patch
         :param target_callable_name: The name given to the new callable in the object to patch
         :param patch_callable: The callable to inject, which must be a callable, but not a class
+        :param must_exist: If True (resp. False), raise RuntimeError if no object
+            exists (resp. an object already exists) at the injection point
         """
         assert self._is_simple_callable(patch_callable), patch_callable
+        self._check_injection_point(target_object, target_callable_name, must_exist)
 
         self._patch_injected_object(patch_callable)
         setattr(target_object, target_callable_name, patch_callable)
 
     def inject_callable_alias(
-        self, target_object, target_attrname, source_object, source_attrname
+        self,
+        target_object,
+        target_attrname,
+        source_object,
+        source_attrname,
+        must_exist=None,
     ):
         """
         Create and inject an alias for the source callable (not a class), which also
@@ -189,9 +237,12 @@ class PatchingUtilities(object):
         :param target_attrname: The name of the callable on the target object
         :param source_object: The object from which to get the callable
         :param source_attrname: The name of the callable on the source object
+        :param must_exist: If True (resp. False), raise RuntimeError if no object
+            exists (resp. an object already exists) at the injection point
         """
         source_callable = getattr(source_object, source_attrname)
         assert self._is_simple_callable(source_callable), source_callable
+        self._check_injection_point(target_object, target_attrname, must_exist)
 
         @functools.wraps(source_callable)
         def wrapper(*args, **kwds):
@@ -208,14 +259,17 @@ class PatchingUtilities(object):
 
         return wrapper
 
-    def inject_class(self, target_object, target_klassname, klass):
+    def inject_class(self, target_object, target_klassname, klass, must_exist=None):
         """Inject a class into an object of any type (module, class, instance...).
 
         :param target_object: The object to patch
         :param target_klassname: The name given to the new class in the object to patch
         :param klass: The class to inject
+        :param must_exist: If True (resp. False), raise RuntimeError if no object
+            exists (resp. an object already exists) at the injection point
         """
         assert isinstance(klass, type), klass
+        self._check_injection_point(target_object, target_klassname, must_exist)
 
         self._patch_injected_object(klass)
         setattr(target_object, target_klassname, klass)
@@ -229,12 +283,17 @@ class PatchingUtilities(object):
         of its immediate parents (with inject_attribute()), since this is normally done 
         during python imports.
 
+        Raises RuntimeError if a module already exists in sys.modules under this name.
+
         :param target_module_name: The dotted name of the new module in sys.modules
         :param module: The module object to inject
         """
         target_module_name = str(target_module_name)  # Python2 compatibility
         assert isinstance(module, types.ModuleType), module
-        assert sys.modules.get(target_module_name) is None, target_module_name
+        if sys.modules.get(target_module_name) is not None:
+            raise RuntimeError(
+                "Module %r already exists in sys.modules" % target_module_name
+            )
 
         self._patch_injected_object(module)
 
@@ -249,9 +308,13 @@ class PatchingUtilities(object):
 
         When the alias is a submodule, its parent module(s) must exist too.
 
+        Raises RuntimeError if a module is already importable under the alias name.
+
         :param alias_name: The dotted name of the alias module
         :param real_name: The dotted name of the real module
         """
+        if self._module_exists(alias_name):
+            raise RuntimeError("Module alias %r already exists" % alias_name)
 
         from compat_patcher_core import import_proxifier
 
