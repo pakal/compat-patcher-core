@@ -87,7 +87,9 @@ def ensure_all_fixers_have_a_test_under_pytest(
             # See https://docs.pytest.org/en/stable/deprecations.html#node-construction-changed-to-node-from-parent
             if hasattr(Function, "from_parent"):
                 function = Function.from_parent(parent, **params)
-            else:
+            else:  # pragma: no cover
+                # Dead under our declared pytest>=7.1.2 requirement (from_parent exists since pytest 5.4),
+                # kept only as a fallback for much older pytest versions.
                 function = Function(parent=parent, **params)
 
             items.append(function)

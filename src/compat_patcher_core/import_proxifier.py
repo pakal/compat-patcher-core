@@ -42,7 +42,9 @@ def enrich_import_error(alias_name):
         )
         if hasattr(e, "msg"):  # py3k
             e.msg = enrich_message(e.msg)
-        else:  # py2k, the "message" attribute is actually ignored by __str__
+        else:  # pragma: no cover
+            # Dead on Python 3, where ImportError always has a "msg" attribute;
+            # kept only as a fallback for py2k, where "message" is ignored by __str__.
             e.args = (enrich_message(e.args[0]),)
         raise
 
@@ -74,7 +76,9 @@ try:
 
     import importlib.machinery, importlib.abc
 
-except ImportError:
+except ImportError:  # pragma: no cover
+    # Dead on any supported Python 3 version, where importlib.machinery/abc always
+    # import successfully; kept only as a fallback for python2.7.
 
     # OLD STYLE : we use PEP 302 find_module/load_module API, available for python2.7+
 
