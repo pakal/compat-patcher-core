@@ -37,6 +37,27 @@ def test_ensure_all_fixers_have_a_test_under_pytest():
         )
 
 
+def test_ensure_all_fixers_have_a_test_under_pytest_missing_test_appended(request):
+    patching_registry = PatchingRegistry("dummyname2")
+
+    @patching_registry.register_compatibility_fixer(fixer_reference_version="10.1")
+    def my_other_dummy_fixer(utils):
+        "A help string"
+        pass
+
+    items = [request.node]  # Use a real pytest item, with a genuine parent/module
+
+    ensure_all_fixers_have_a_test_under_pytest(
+        config=None, items=items, patching_registry=patching_registry
+    )
+
+    assert len(items) == 2
+    new_item = items[-1]
+    assert new_item.name == "MISSING_test_my_other_dummy_fixer"
+    with pytest.raises(RuntimeError, match="No test written for .* fixer"):
+        new_item.obj()
+
+
 def test_ensure_no_stdlib_warnings_in_package():
     import warnings  # This line will trigger checker error
 

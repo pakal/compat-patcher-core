@@ -270,6 +270,17 @@ def test_logging_level_setting(capsys):
     assert "<INFORMATION3>" in err
 
 
+def test_module_is_loaded_or_importable():
+    assert PatchingUtilities._module_is_loaded_or_importable("sys") is True
+    assert PatchingUtilities._module_is_loaded_or_importable("csv") is True
+    assert (
+        PatchingUtilities._module_is_loaded_or_importable(
+            "nonexistent_parent_pkg_xyz.foo"
+        )
+        is False
+    )
+
+
 def test_version_tuplify_detuplify():
     assert tuplify_software_version((5, 0)) == (5, 0)
     assert tuplify_software_version("5.0") == (5, 0)
