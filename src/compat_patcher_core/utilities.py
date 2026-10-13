@@ -152,7 +152,7 @@ class PatchingUtilities(object):
             )
 
     @staticmethod
-    def _module_exists(module_name):
+    def _module_is_loaded_or_importable(module_name):
         """Return True if the module is already loaded, or importable."""
         if sys.modules.get(module_name) is not None:
             return True
@@ -313,7 +313,7 @@ class PatchingUtilities(object):
         :param alias_name: The dotted name of the alias module
         :param real_name: The dotted name of the real module
         """
-        if self._module_exists(alias_name):
+        if self._module_is_loaded_or_importable(alias_name):
             raise RuntimeError("Module alias %r already exists" % alias_name)
 
         from compat_patcher_core import import_proxifier
