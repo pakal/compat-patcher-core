@@ -95,3 +95,10 @@ def test_import_proxifier():
     # Re-overridden by our own importer on python3 only
     assert my_urllib_parse_alias.__name__ == "urllib.parse"
     assert my_urllib_parse_alias.urlencode(dict(name="h\xc3llo")) == "name=h%C3%83llo"
+
+
+def test_import_proxifier_supports_invalidate_caches():
+    import importlib
+
+    install_import_proxifier()
+    importlib.invalidate_caches()  # Must not break on our class-based finder

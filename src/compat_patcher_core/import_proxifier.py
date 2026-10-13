@@ -147,6 +147,11 @@ else:
         """
 
         @classmethod
+        def invalidate_caches(cls):
+            # Must be a classmethod, since the class itself is inserted in sys.meta_path
+            pass
+
+        @classmethod
         def find_spec(cls, fullname, *args, **kwargs):
 
             # print("MetaPathFinder FINDSPEC", fullname, args, kwargs)

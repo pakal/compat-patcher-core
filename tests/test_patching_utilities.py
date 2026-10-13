@@ -167,7 +167,7 @@ def test_inject_import_alias_does_not_import_parent_by_default(tmp_path, monkeyp
     (package_dir / "__init__.py").write_text(
         "raise AttributeError('must not be imported')"
     )
-    monkeypatch.setattr(sys, "path", [str(tmp_path)] + sys.path)
+    monkeypatch.syspath_prepend(str(tmp_path))  # Calls importlib.invalidate_caches()
 
     patching_utilities.inject_import_alias(
         "unimportable_package.my_alias", real_name="csv"
