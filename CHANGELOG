@@ -5,6 +5,7 @@ Version 2.4
 * Add "must_exist" parameter to inject_attribute(), inject_callable(), inject_callable_alias(),
   inject_class() and inject_import_alias() utilities, to detect wrong attribute names or mismatches with patched software versions
 * inject_module() now raises RuntimeError instead of AssertionError if the target module already exists
+* Fix crash of importlib.invalidate_caches() once the import proxifier is installed
 
 
 Version 2.3
