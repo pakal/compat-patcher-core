@@ -153,8 +153,20 @@ class PatchingUtilities(object):
 
     @staticmethod
     def _module_is_loaded_or_importable(module_name):
-        """Return True if the module is already loaded, or importable."""
+        """Return True if the module is already loaded, registered as an import alias,
+        or importable.
+
+        Beware, when `module_name` is a submodule, the latter check imports its
+        parent package(s).
+        """
+        from compat_patcher_core import import_proxifier
+
         if sys.modules.get(module_name) is not None:
+            return True
+        if any(
+            alias_name == module_name
+            for (alias_name, _) in import_proxifier.MODULES_ALIASES_REGISTRY
+        ):
             return True
         try:
             return importlib.util.find_spec(module_name) is not None
@@ -299,7 +311,7 @@ class PatchingUtilities(object):
 
         sys.modules[target_module_name] = module
 
-    def inject_import_alias(self, alias_name, real_name):
+    def inject_import_alias(self, alias_name, real_name, must_exist=None):
         """Create an import alias for the selected module.
 
         This doesn't directly patch sys.modules, but instead uses the imports hooks
@@ -308,13 +320,24 @@ class PatchingUtilities(object):
 
         When the alias is a submodule, its parent module(s) must exist too.
 
-        Raises RuntimeError if a module is already importable under the alias name.
-
         :param alias_name: The dotted name of the alias module
         :param real_name: The dotted name of the real module
+        :param must_exist: If True (resp. False), raise RuntimeError if no module
+            is loaded or importable (resp. a module is already loaded or importable)
+            under the alias name; beware, for a submodule alias, this check
+            imports its parent package(s)
         """
-        if self._module_is_loaded_or_importable(alias_name):
-            raise RuntimeError("Module alias %r already exists" % alias_name)
+        assert must_exist in (None, True, False), must_exist
+        if must_exist is not None:
+            already_exists = self._module_is_loaded_or_importable(alias_name)
+            if must_exist and not already_exists:
+                raise RuntimeError(
+                    "No module %r found, while must_exist=True" % alias_name
+                )
+            if not must_exist and already_exists:
+                raise RuntimeError(
+                    "Module %r already exists, while must_exist=False" % alias_name
+                )
 
         from compat_patcher_core import import_proxifier
 

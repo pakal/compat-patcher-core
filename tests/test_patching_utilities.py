@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import sys
+
 import pytest
 
 from compat_patcher_core.utilities import (
@@ -135,12 +137,42 @@ def test_must_exist_parameter():
     with pytest.raises(RuntimeError, match="already exists in sys.modules"):
         patching_utilities.inject_module("csv", dummy_module)
 
-    with pytest.raises(RuntimeError, match="already exists"):
-        patching_utilities.inject_import_alias("json", real_name="csv")
+    with pytest.raises(RuntimeError, match="must_exist=False"):
+        patching_utilities.inject_import_alias("json", real_name="csv", must_exist=False)
 
-    patching_utilities.inject_import_alias("newjson", real_name="json")
-    with pytest.raises(RuntimeError, match="already exists"):
-        patching_utilities.inject_import_alias("newjson", real_name="json")
+    with pytest.raises(RuntimeError, match="must_exist=True"):
+        patching_utilities.inject_import_alias(
+            "newjson", real_name="json", must_exist=True
+        )
+
+    patching_utilities.inject_import_alias(
+        "newjson", real_name="json", must_exist=False
+    )
+    with pytest.raises(RuntimeError, match="must_exist=False"):
+        patching_utilities.inject_import_alias(
+            "newjson", real_name="json", must_exist=False
+        )
+    patching_utilities.inject_import_alias(
+        "newjson", real_name="json", must_exist=True
+    )
+    patching_utilities.inject_import_alias("newjson", real_name="json")  # No-op
+
+
+def test_inject_import_alias_does_not_import_parent_by_default(tmp_path, monkeypatch):
+
+    patching_utilities = PatchingUtilities(example_settings)
+
+    package_dir = tmp_path / "unimportable_package"
+    package_dir.mkdir()
+    (package_dir / "__init__.py").write_text(
+        "raise AttributeError('must not be imported')"
+    )
+    monkeypatch.setattr(sys, "path", [str(tmp_path)] + sys.path)
+
+    patching_utilities.inject_import_alias(
+        "unimportable_package.my_alias", real_name="csv"
+    )
+    assert "unimportable_package" not in sys.modules
 
 
 def test_patch_injected_objects_setting():
